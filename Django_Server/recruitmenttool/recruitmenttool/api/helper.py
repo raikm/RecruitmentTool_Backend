@@ -4,3 +4,11 @@ def handle_uploaded_file(filename, f):
         for chunk in f.chunks():
             destination.write(chunk)
     return 'cda_files/'+ filename
+
+
+def define_boolean(boolean_string):
+    print("start")
+    print(boolean_string)
+    if boolean_string == "true":
+        return True
+    else: return False

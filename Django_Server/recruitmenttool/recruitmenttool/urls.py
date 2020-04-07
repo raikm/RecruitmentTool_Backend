@@ -15,12 +15,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+#from recruitmenttool.api.views import create_new_criteria, criteria_detail
+from rest_framework import routers
 
+app_name = "recruitmenttool"
 
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-
-    # REST FRAMEWORK URLs
-    path('', include('api.urls')), #emtpy = index
+    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    #REST FRAMEWORK URLs
+    path('api/', include('recruitmenttool.api.urls', namespace='recruitmenttool')),
+    #emtpy = index
 ]
