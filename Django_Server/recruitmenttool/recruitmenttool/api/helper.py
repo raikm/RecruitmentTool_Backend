@@ -1,14 +1,16 @@
-
-def handle_uploaded_file(filename, f):
-    with open('cda_files/'+ filename, 'wb+') as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
-    return 'cda_files/'+ filename
+import json
 
 
 def define_boolean(boolean_string):
-    print("start")
-    print(boolean_string)
     if boolean_string == "true":
         return True
-    else: return False
+    else:
+        return False
+
+
+def validate_json(s):
+    try:
+        json.loads(s)
+    except Exception:
+        return False
+    return True

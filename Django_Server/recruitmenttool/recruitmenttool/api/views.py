@@ -1,59 +1,70 @@
-from rest_framework import viewsets
+# -*- coding: utf-8 -*-
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.renderers import JSONRenderer, TemplateHTMLRenderer
-from .serializers import CriteriaSerializer, CriteriumSerializer
-from .helper import handle_uploaded_file, define_boolean
+from rest_framework.decorators import api_view
+from .helper import define_boolean, validate_json
+from recruitmenttool.api.serializers import CriteriaSerializer
 from recruitmenttool.models import Criteria, Criterium, CDAFile, Patient
-
-
+from recruitmenttool.cdamanager.Evaluations import Evaluation
+from django.utils import timezone
 import datetime
+import json
+import html
+
+now = datetime.datetime.now(tz=timezone.utc)
+
 
 @csrf_exempt
 @api_view(('POST',))
 def create_new_criteria(request):
     if request.method == 'POST':
         r = request.data
-
         try:
-            criteria = Criteria.objects.create( name=r.get('Criteria_Name'),
-                                                description=r.get('Description'),
-                                                date=datetime.datetime.utcnow(),
-                                                only_current_patient_cohort=define_boolean(r.get('Only_current_patient_cohort')))
+            criteria = Criteria.objects.create(name=r.get('Criteria_Name'),
+                                               description=r.get('Description'),
+                                               date=now,
+                                               only_current_patient_cohort=define_boolean(r.get('Only_current_patient_cohort')))
 
-            #Todo: loop
-            Criterium.objects.create(           name=r.get('Criterium_Name'),
-                                                xPath=r.get('xPath'),
-                                                criteria=criteria)
-            criteria_serializer = CriteriaSerializer(instance=criteria)
+            criterium_list = None
+            criterium_list_str = r.get('Criterium_Names[]')
+            if criterium_list_str:
+                if validate_json(criterium_list_str):
+                    criterium_list = json.loads(criterium_list_str)
+                else:
+                    return Response("NO VALID JSON",
+                                    status=status.HTTP_400_BAD_REQUEST)
+            else:
+                return Response("NO CORRECT CRITERIA INFORMATION PROVIDED",
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            for criterium in criterium_list:
+                Criterium.objects.create(name=html.unescape(str(criterium[0])), xPath=html.unescape(str(criterium[1])), criteria=criteria)
+
             dataList = request.FILES.getlist('file')
-            #TODO: File muss nicht gegeben sein
             if dataList:
                 for file in dataList:
-                    #TODO look for patient first of not found create new one
-                    patient = Patient.objects.create(   title="t",
-                                                        first_name="f",
-                                                        middle_name="m",
-                                                        last_name="l",
-                                                        birthdate=datetime.datetime.utcnow())#Todo extrahieren von XML
+                    # TODO look for patient first of not found create new one
+                    patient = Patient.objects.create(title="t",
+                                                     first_name="f",
+                                                     middle_name="m",
+                                                     last_name="l",
+                                                     birthdate=now)  # Todo extrahieren von XML
 
+                    CDAFile.objects.create(name="Test",  # Todo save filename
+                                           path="Testpath",  # Todo cda_files+name - necessary??
+                                           file=file,
+                                           file_date=now,  # TODO: get Data from XML
+                                           upload_date=now,
+                                           patient=patient)
 
-                    cda_file = CDAFile.objects.create(  name="Test",#Todo save filename
-                                                        path="Testpath",#Todo cda_files+name
-                                                        file=file,
-                                                        file_date=datetime.datetime.utcnow(),#TODO: get Data from XML
-                                                        upload_date=datetime.datetime.utcnow(),
-                                                        patient=patient)
-
-
-                    return Response("CREATED", status=status.HTTP_201_CREATED)
-            # else:
-            #     return Response("NO FILES PROVIDED", status=status.HTTP_400_BAD_REQUEST)
+            Evaluation.start_evaluation(criteria.id, criteria.only_current_patient_cohort)
+            # TODO: return data review from evaluation
             return Response("CREATED", status=status.HTTP_201_CREATED)
-        except:
-            return Response("NO CORRECT INFORMATION PROVIDED", status=status.HTTP_400_BAD_REQUEST)
+
+        except Exception:
+            return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
+                            status=status.HTTP_400_BAD_REQUEST)
 
     return Response(status=status.HTTP_400_BAD_REQUEST)
 

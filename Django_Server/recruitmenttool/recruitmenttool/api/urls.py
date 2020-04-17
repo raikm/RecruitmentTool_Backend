@@ -1,5 +1,4 @@
 from django.urls import include, path
-from rest_framework import routers
 from .views import create_new_criteria, criteria_detail
 
 app_name = "recruitmenttool"
