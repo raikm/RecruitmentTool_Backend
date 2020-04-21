@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-#from recruitmenttool.api.views import create_new_criteria, criteria_detail
-from rest_framework import routers
+from api.views import create_new_criteria, criteria_detail
 
 app_name = "recruitmenttool"
 
@@ -25,7 +24,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #REST FRAMEWORK URLs
-    path('api/', include('recruitmenttool.api.urls', namespace='recruitmenttool')),
+    path('api/', include('api.urls', namespace='api')),
+    path('create/', create_new_criteria, name='create_new_criteria'),
+    path("criteria/<int:pk>/", criteria_detail, name="criteria_detail"),
     #emtpy = index
 ]
 

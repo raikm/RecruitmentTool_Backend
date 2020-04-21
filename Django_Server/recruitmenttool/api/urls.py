@@ -1,7 +1,7 @@
 from django.urls import include, path
 from .views import create_new_criteria, criteria_detail
 
-app_name = "recruitmenttool"
+app_name = "api"
 
 
 urlpatterns = [

@@ -4,9 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from .helper import define_boolean, validate_json
-from recruitmenttool.api.serializers import CriteriaSerializer
-from recruitmenttool.models import Criteria, Criterium, CDAFile, Patient
-from recruitmenttool.cdamanager.Evaluations import Evaluation
+from api.serializers import CriteriaSerializer
+from .models import Criteria, Criterium, CDAFile, Patient
+from cdamanager.Evaluations import Evaluation
 from django.utils import timezone
 import datetime
 import json
@@ -26,7 +26,7 @@ def create_new_criteria(request):
                                                date=now,
                                                only_current_patient_cohort=define_boolean(r.get('Only_current_patient_cohort')))
 
-            criterium_list = None
+            criterium_list = None #TODO: Refactor ->  global
             criterium_list_str = r.get('Criterium_Names[]')
             if criterium_list_str:
                 if validate_json(criterium_list_str):
@@ -58,9 +58,9 @@ def create_new_criteria(request):
                                            upload_date=now,
                                            patient=patient)
 
-            Evaluation.start_evaluation(criteria.id, criteria.only_current_patient_cohort)
+            result = Evaluation.start_evaluation(criteria.id, criteria.name, criteria.only_current_patient_cohort)
             # TODO: return data review from evaluation
-            return Response("CREATED", status=status.HTTP_201_CREATED)
+            return Response(result, status=status.HTTP_201_CREATED)
 
         except Exception:
             return Response("NO CORRECT INFORMATION PROVIDED" + Exception,

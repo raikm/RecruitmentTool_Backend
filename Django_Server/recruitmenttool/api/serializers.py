@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from recruitmenttool.models import Criteria, Criterium, Patient, CDAFile
+from .models import Criteria, Criterium, Patient, CDAFile
 
 
 class CriteriumSerializer(serializers.HyperlinkedModelSerializer):
