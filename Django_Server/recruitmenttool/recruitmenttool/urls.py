@@ -28,3 +28,10 @@ urlpatterns = [
     path('api/', include('recruitmenttool.api.urls', namespace='recruitmenttool')),
     #emtpy = index
 ]
+
+
+def startup():
+    print("----------START-DJANGO-SERVER--v1--------\n")
+
+
+startup()
