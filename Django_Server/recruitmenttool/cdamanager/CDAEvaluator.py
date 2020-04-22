@@ -39,15 +39,14 @@ class CDAEvaluator:
     #     self.proc.clear_configuration_properties()
     #     self.proc.release()
 
-    def evaluate_cda_file_Etree(self, xPath, cda_file_path):
-
-        tree = ET.parse(cda_file_path)
-        print(tree)
+    def evaluate_cda_file_Etree(self, xPath, cda_file):
+        print(cda_file)
+        #validate xml type and proper xml file
+        tree = ET.parse(cda_file)
         root = tree.getroot()
         # TODO: read header for namespace
         namespaces = {'': 'urn:hl7-org:v3',
                       'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
-
 
         results = elementpath.select(root, xPath, namespaces)
 

@@ -19,14 +19,15 @@ class Criterium(models.Model):
 class Patient(models.Model):
     title = models.CharField(max_length=30)
     first_name = models.CharField(max_length=50)
-    middle_name = models.CharField(max_length=50)
+    middle_names = models.CharField(max_length=50) #TODO: change to list
     last_name = models.CharField(max_length=50)
     birthdate = models.DateField()
+    patient_id = models.IntegerField()
 
 
 class CDAFile(models.Model):
     name = models.CharField(max_length=400)
-    path = models.CharField(max_length=400)
+    cda_id = models.FloatField()
     file = models.FileField(upload_to='cda_files')
     file_date = models.DateTimeField()
     upload_date = models.DateTimeField(auto_now=True)
@@ -34,5 +35,5 @@ class CDAFile(models.Model):
         Patient, related_name='patient', on_delete=models.CASCADE)
     # TODO: belong to a studie null or criteria ID and no cascade
 
-    class Meta:
-        unique_together = ['patient']
+    # class Meta:
+    #     unique_together = ['patient']
