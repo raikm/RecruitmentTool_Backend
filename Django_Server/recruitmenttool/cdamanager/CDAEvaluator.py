@@ -40,26 +40,25 @@ class CDAEvaluator:
     #     self.proc.release()
 
     def evaluate_cda_file_Etree(self, xPath, cda_file):
-        print(cda_file)
-        #validate xml type and proper xml file
-        tree = ET.parse(cda_file)
+        if type(cda_file) != str:
+            cda_file.seek(0)
+        try:
+            tree = ET.parse(cda_file)
+        except FileNotFoundError:
+            return False
+        #TODO: valid XML?
         root = tree.getroot()
         # TODO: read header for namespace
         namespaces = {'': 'urn:hl7-org:v3',
                       'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
-
-        results = elementpath.select(root, xPath, namespaces)
+        try:
+            results = elementpath.select(root, xPath, namespaces)
+        except elementpath.exceptions.ElementPathSyntaxError:
+            results = None
 
         if results is None or len(results) == 0:
             return False
         return True
 
-    def evaluate_file_type(file_path):
-        filename, file_extension = os.path.splitext(str(file_path))
-        if file_extension == "xml":
-            return True
-        else:
-            return False
 
-    # TODO: METHOD: find Patient in CDA
-    # TODO: METHOD: find Date in CDA
+    

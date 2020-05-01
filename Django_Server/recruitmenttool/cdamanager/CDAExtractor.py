@@ -11,8 +11,7 @@ class CDAExtractor:
         self.cda_file = cda_file
         self.tree = ET.parse(self.cda_file)
         self.root = self.tree.getroot()
-        #self.namespace = self.root.tag
-        #TODO: find out programmatcily
+        #TODO: find namespace out programmatcily
         self.namespaces = {'': 'urn:hl7-org:v3',
                       'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
 
@@ -46,8 +45,9 @@ class CDAExtractor:
     def get_date_created(self):
         xPath = """/*/effectiveTime/@value"""
         resultStr = elementpath.select(self.root, xPath, self.namespaces)
-        #TODO: abfangen wenn kein String enthalten ist
-        result = datetime.strptime(resultStr[0], '%Y%m%d%H%M%S%z')
+        result = None
+        if len(resultStr) > 0:
+            result = datetime.strptime(resultStr[0], '%Y%m%d%H%M%S%z')
         return result
 
     def get_CDA_type(self):

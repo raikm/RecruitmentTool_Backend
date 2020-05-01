@@ -10,7 +10,7 @@ class Criteria(models.Model):
 
 
 class Criterium(models.Model):
-    name = models.CharField(max_length=100)  # Todo: limitieren in FrontEnd
+    name = models.CharField(max_length=100)
     xPath = models.CharField(max_length=1000)
     criteria = models.ForeignKey(
         Criteria, related_name='criteriums', on_delete=models.CASCADE)
@@ -33,7 +33,3 @@ class CDAFile(models.Model):
     upload_date = models.DateTimeField(auto_now=True)
     patient = models.ForeignKey(
         Patient, related_name='patient', on_delete=models.CASCADE)
-    # TODO: belong to a studie null or criteria ID and no cascade
-
-    # class Meta:
-    #     unique_together = ['patient']
