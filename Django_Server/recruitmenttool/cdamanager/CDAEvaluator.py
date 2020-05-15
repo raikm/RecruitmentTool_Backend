@@ -1,64 +1,89 @@
-# import sys
-# sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
-# from saxonc import *
-# import saxonc
 import xml.etree.ElementTree as ET
 import elementpath
-import os
-
+#source: https://eulxml.readthedocs.io/en/latest/xpath.html
+import eulxml.xpath
+import re
 
 class CDAEvaluator:
+    SATISFIED = "SATISFIED"
+    NOT_SATISFIED = "NOT_SATISFIED"
+    NO_DATA = "NO_DATA"
+    ERROR = "ERROR"
 
-    # SAXCON Library
-    # proc = saxonc.PySaxonProcessor(license=True)
+    # TODO: Refactor
+    def get_properties_from_ast(n):
+        OPERATOR_MAPPING = {'and', 'not', 'or'}
+        COMPARISON_MAPPING = {'>', '>=', '<', '<=', "=", "!="}
 
-    # def evaluate_cda_file(self, xPath, cda_file_path):
-    #     try:
-    #         xp = self.proc.new_xpath_processor()
-    #         xp.declare_namespace("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
-    #         xp.declare_namespace("", "urn:hl7-org:v3")
-    #         xp.set_context(file_name=cda_file_path)
-    #         print("-------------------------------")
-    #         print(cda_file_path)
-    #         print(xPath)
-    #         print("start evaluate")
-    #         print("-------------------------------")
-    #         results = xp.evaluate(xPath)
-    #
-    #         xp.clear_parameters()
-    #         xp.clear_properties()
-    #     except:
-    #         print("---------------ERROR----------------")
-    #     if results is None:
-    #         del results
-    #         return False
-    #     del results
-    #     return True
-    #
-    # def clean_up(self):
-    #     self.proc.clear_configuration_properties()
-    #     self.proc.release()
+        dictionary = dict()
 
-    def evaluate_cda_file_Etree(self, xPath, cda_file):
+        nodeList = n.relative.predicates
+        templateList = []
+        for node in nodeList:
+
+            def visit(node):
+                if type(node.right) is not str and node.right.op in list(COMPARISON_MAPPING):
+                    if "templateId" in str(node.right):
+                        templateList.append(eulxml.xpath.serialize(node.right))
+
+            visit(node)
+            while node.left.op in list(OPERATOR_MAPPING):
+                node = node.left
+                visit(node)
+            if node.left.op in list(COMPARISON_MAPPING):
+                if "templateId" in str(node):
+                    templateList.append(eulxml.xpath.serialize(node.left))
+
+        dictionary["templatedId"] = templateList
+
+        return dictionary
+
+    def get_properties_from_xpath(self, xpath):
+        return self.get_properties_from_ast(eulxml.xpath.parse(xpath))
+
+    def get_root_from_xml(self, cda_file):
+        # TODO: valid XML?
         if type(cda_file) != str:
             cda_file.seek(0)
         try:
             tree = ET.parse(cda_file)
         except FileNotFoundError:
-            return False
-        #TODO: valid XML?
-        root = tree.getroot()
-        # TODO: read header for namespace
-        namespaces = {'': 'urn:hl7-org:v3',
-                      'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+            print("FILE NOT FOUND") #TODO: better error handling
+
+        return tree.getroot()
+
+    def evaluate_cda_file_Etree(self, xPath, cda_file):
+        try:
+            root = self.get_root_from_xml(self, cda_file)
+        except:
+            return self.ERROR
+
+        namespaces = {'': 'urn:hl7-org:v3'}
+
+        #TODO: Refactor
         try:
             results = elementpath.select(root, xPath, namespaces)
+            if results is None or len(results) == 0:
+                dictionary = self.get_properties_from_xpath(self, xPath)
+                template_ids = dictionary["templatedId"]
+                if template_ids is not None or len(template_ids) != 0:
+                    base = xPath.split("[")[0]
+                    predicates = ""
+                    for templateId in template_ids[:-1]:
+                        predicates += templateId + " and "
+                    predicates += template_ids[-1]
+                    _xPath = base + "[" + predicates + "]"
+                    part_results = elementpath.select(root, _xPath, namespaces)
+
         except elementpath.exceptions.ElementPathSyntaxError:
-            results = None
+            return self.ERROR
 
-        if results is None or len(results) == 0:
-            return False
-        return True
+        if results is not None and len(results) != 0:
+            return self.SATISFIED
+        elif part_results is not None and len(part_results) != 0:
+            return self.NOT_SATISFIED
+        else:
+            return self.NO_DATA
 
 
-    
+
