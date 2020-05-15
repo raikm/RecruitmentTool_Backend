@@ -1,11 +1,8 @@
-#import sys
-#sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
-#from saxonc import *
-#import saxonc
 import xml.etree.ElementTree as ET
 import elementpath
-
+#source: https://eulxml.readthedocs.io/en/latest/xpath.html
 import eulxml.xpath
+import re
 
 class CDAEvaluator:
     SATISFIED = "SATISFIED"
@@ -13,6 +10,7 @@ class CDAEvaluator:
     NO_DATA = "NO_DATA"
     ERROR = "ERROR"
 
+    # TODO: Refactor
     def get_properties_from_ast(n):
         OPERATOR_MAPPING = {'and', 'not', 'or'}
         COMPARISON_MAPPING = {'>', '>=', '<', '<=', "=", "!="}
@@ -20,7 +18,6 @@ class CDAEvaluator:
         dictionary = dict()
 
         nodeList = n.relative.predicates
-        print(nodeList)
         templateList = []
         for node in nodeList:
 
@@ -44,20 +41,26 @@ class CDAEvaluator:
     def get_properties_from_xpath(self, xpath):
         return self.get_properties_from_ast(eulxml.xpath.parse(xpath))
 
-    def evaluate_cda_file_Etree(self, xPath, cda_file):
+    def get_root_from_xml(self, cda_file):
+        # TODO: valid XML?
         if type(cda_file) != str:
             cda_file.seek(0)
         try:
             tree = ET.parse(cda_file)
         except FileNotFoundError:
-            return self.ERROR
-        #TODO: valid XML?
-        root = tree.getroot()
-        # TODO: read header for namespace
-        #elementpath.XPath2Parser().namespaces
-        namespaces = {'': 'urn:hl7-org:v3',
-                      'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+            print("FILE NOT FOUND") #TODO: better error handling
 
+        return tree.getroot()
+
+    def evaluate_cda_file_Etree(self, xPath, cda_file):
+        try:
+            root = self.get_root_from_xml(self, cda_file)
+        except:
+            return self.ERROR
+
+        namespaces = {'': 'urn:hl7-org:v3'}
+
+        #TODO: Refactor
         try:
             results = elementpath.select(root, xPath, namespaces)
             if results is None or len(results) == 0:

@@ -3,6 +3,12 @@ from .CDAEvaluator import CDAEvaluator as evaluator
 import json
 
 
+SATISFIED = "SATISFIED"
+NOT_SATISFIED = "NOT_SATISFIED"
+NO_DATA = "NO_DATA"
+ERROR = "ERROR"
+
+
 def evaluate_request(id):
     critierum_list = model.Criterium.objects.all().filter(criteria_id=id)
     patient_list = model.Patient.objects.all()
@@ -22,16 +28,23 @@ def evaluate_request(id):
             result = {}
             result["criterum_id"] = criterium.id
             result["criterum_name"] = criterium.name
-            evaluation_result = False
-            evaluation_result_text = "no match"
+
+            evaluation_result = NO_DATA
+            evaluation_result_text = "NO DATA WAS FOUND"
+
             evaluation_related_cda = None
             for file in patient_cda_files:
                 evaluation_result = evaluator.evaluate_cda_file_Etree(evaluator, criterium.xPath, file.file)
-                if evaluation_result is not True:
+                if evaluation_result is NO_DATA:
                     continue
-                evaluation_result_text = "match"
-                evaluation_related_cda = file.cda_id
-                break
+                elif evaluation_result is NOT_SATISFIED:
+                    evaluation_result_text = "NO SATISFIED DATA FOUND"
+                    evaluation_related_cda = file.cda_id
+                    continue
+                elif evaluation_result is SATISFIED:
+                    evaluation_result_text = "SATISFIED DATA"
+                    evaluation_related_cda = file.cda_id
+                    break
 
             result["evaluation_result"] = evaluation_result
             result["evaluation_result_text"] = evaluation_result_text

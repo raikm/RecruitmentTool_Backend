@@ -13,8 +13,8 @@ class TestCDAEvaluator(unittest.TestCase):
     xPath_a_g_200 = """//recordTarget[number(substring(patientRole/patient/birthTime/@value,1,4)) < 1820]/patientRole/patient/birthTime/@value"""
     xPath_no_valide = """$$$$$$/z/ordTarget[number(substring(patientRole/patient/birthTime/@value,1,4)) < 1820]/patientRole/patient/birthTime/@value"""
     # File mit Patienten aelter 6 Jahre
-    cda_test_file = "UnitTests/Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
-
+    cda_entlassungsbrief_aerztlich = "UnitTests/Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
+    cda_laborbefund = "UnitTests/Testdata/ELGA-043-Laborbefund_EIS-FullSupport_files_attached.xml"
 
 
     no_valide_file = "no_valid_path"
@@ -24,24 +24,23 @@ class TestCDAEvaluator(unittest.TestCase):
     NO_DATA = "NO_DATA"
     ERROR = "ERROR"
 
-
     def test_evaluate_cda_file_satisfied(self):
         result = evaluator.evaluate_cda_file_Etree(
-        evaluator, self.xPath_diagnose_m25, self.cda_test_file)
+        evaluator, self.xPath_diagnose_m25, self.cda_entlassungsbrief_aerztlich)
         self.assertEqual(self.SATISFIED, result)
 
     def test_evaluate_cda_file_not_satisfied(self):
         result = evaluator.evaluate_cda_file_Etree(
-        evaluator, self.xPath_ns, self.cda_test_file)
+        evaluator, self.xPath_ns, self.cda_entlassungsbrief_aerztlich)
         self.assertEqual(self.NOT_SATISFIED, result)
 
     def test_evaluate_cda_file_no_data(self):
         result = evaluator.evaluate_cda_file_Etree(
-        evaluator, self.xPath_nd, self.cda_test_file)
+        evaluator, self.xPath_nd, self.cda_entlassungsbrief_aerztlich)
         self.assertEqual(self.NO_DATA, result)
 
     def test_evaluate_cda_file_Wrong_xPath(self):
-        result = evaluator.evaluate_cda_file_Etree(evaluator, self.xPath_no_valide, self.cda_test_file)
+        result = evaluator.evaluate_cda_file_Etree(evaluator, self.xPath_no_valide, self.cda_entlassungsbrief_aerztlich)
         self.assertEqual(self.ERROR, result)
 
     def test_evaluate_cda_file_no_valide_file(self):

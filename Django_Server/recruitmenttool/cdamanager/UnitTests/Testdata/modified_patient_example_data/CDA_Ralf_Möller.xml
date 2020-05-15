@@ -80,7 +80,7 @@
     <!--
 		Dokumenten-Id (siehe Allgemeiner Leitfaden, Kapitel 6.2.6)
 	-->
-    <id root="1.2.40.0.34.99.4613.3.1" extension="1234567.1" assigningAuthorityName="Amadeus Spital"/>
+    <id root="1.2.40.0.34.99.4613.3.1" extension="3214567.1" assigningAuthorityName="Amadeus Spital"/>
 
     <!--
 		Dokumentenklasse (siehe Allgemeiner Leitfaden, Kapitel 6.2.7)
@@ -112,7 +112,7 @@
     <!--
 		Versionierung des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.12)
 	-->
-    <setId root="1.2.40.0.34.99.4613.3.1" extension="1234567"
+    <setId root="1.2.40.0.34.99.4613.3.1" extension="3214567"
         assigningAuthorityName="Amadeus Spital"/>
     <versionNumber value="1"/>
 
@@ -138,11 +138,11 @@
 				IDs des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.2)
 			-->
             <!-- Identifikation des Patienten im lokalen System -->
-            <id root="1.2.40.0.34.99.4613.3.2" extension="121212"
+            <id root="1.2.40.0.34.99.4613.3.2" extension="321212"
                 assigningAuthorityName="Amadeus Spital"/>
 
             <!-- Sozialversicherungsnummer des Patienten	-->
-            <id root="1.2.40.0.10.1.4.3.1" extension="1111241261"
+            <id root="1.2.40.0.10.1.4.3.1" extension="3211241261"
                 assigningAuthorityName="Österreichische Sozialversicherung"/>
 
             <!--
@@ -171,9 +171,9 @@
                 <name>
                     <prefix qualifier="AC">Dipl.Ing.</prefix>
                     <prefix qualifier="PR">Hofrat</prefix>
-                    <given>Herbert</given>
+                    <given>Ralf</given>
                     <given>Hannes</given>
-                    <family>Mustermann</family>
+                    <family>Möller</family>
                     <family qualifier="BR">VorDerHeirat</family>
                     <suffix qualifier="AC">BSc</suffix>
                     <suffix qualifier="AC">MBA</suffix>
