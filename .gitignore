@@ -13,3 +13,4 @@ Django_Server/recruitmenttool/api/__pycache__/views.cpython-37.pyc
 Django_Server/recruitmenttool/api/__pycache__/models.cpython-37.pyc
 Django_Server/recruitmenttool/api/__pycache__/models.cpython-37.pyc
 Django_Server/recruitmenttool/api/__pycache__/views.cpython-37.pyc
+*.pyc
