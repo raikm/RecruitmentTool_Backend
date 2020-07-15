@@ -1,19 +1,31 @@
 from django.db import models
 
 
-class Criteria(models.Model):
+class Study(models.Model):
     name = models.CharField(max_length=100)  # Todo: limitieren in FrontEnd
     description = models.CharField(
         max_length=600, blank=True, default='Keine Beschreibung')
     date = models.DateTimeField()
-    only_current_patient_cohort = models.BooleanField()
+    only_current_patient_cohort = models.BooleanField() #TODO: per default in FrontEnd
 
 
 class Criterium(models.Model):
+    criterium_type = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    study = models.ForeignKey(Study, related_name='criteriums', on_delete=models.CASCADE)
+
+
+class Condition(models.Model):
     name = models.CharField(max_length=100)
     xPath = models.CharField(max_length=1000)
-    criteria = models.ForeignKey(
-        Criteria, related_name='criteriums', on_delete=models.CASCADE)
+    value_xPath = models.CharField(max_length=1000)
+    criterium = models.ForeignKey(Criterium, related_name='conditions', on_delete=models.CASCADE)
+
+
+class Information_Need(models.Model):
+    name = models.CharField(max_length=100)
+    xPath = models.CharField(max_length=1000)
+    study = models.ForeignKey(Study, related_name='information_needed', on_delete=models.CASCADE)
 
 
 class Patient(models.Model):

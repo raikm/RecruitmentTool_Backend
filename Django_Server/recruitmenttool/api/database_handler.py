@@ -1,49 +1,68 @@
 # -*- coding: utf-8 -*-
 from cdamanager.CDAExtractor import CDAExtractor
-from .models import Criteria, Criterium, CDAFile, Patient
-from .helper import define_boolean, validate_json
+from .models import Study, Criterium, Condition, CDAFile, Patient, Information_Need
+from .helper import validate_json
 import datetime
 import json
 import html
-import sys
-
-
 now = datetime.datetime.now()
+
 
 class Database_Handler:
 
     def __init__(self, request):
         self.request = request
-        # self.file = file
-        # self.extractor = CDAExtractor(self.file)
+        self.file = file
+        self.extractor = CDAExtractor(self.file)
 
-    def write_criteria_in_db(self):
+    def write_study_in_db(self):
         try:
-            criteria = Criteria.objects.create(name=self.request.get('Criteria_Name'),
+            study = Study.objects.create(name=self.request.get('Study_Name'),
                                                description=self.request.get(
                                                    'Description'),
                                                date=now,
-                                               only_current_patient_cohort=False) #BUGFIX
-            return criteria
+                                               only_current_patient_cohort=True)
+            return study
         except:
-            return None
+            print("----------Error while creating Study Object----------")
 
-    def write_criterium_in_db(self, criteria):
+    def write_criterium_in_db(self, study):
         global criterium_list
-        criterium_list_str = self.request.get('Criterium_Names[]')
+        criterium_list_str = self.request.get('Criterias[]')
         if criterium_list_str and criterium_list_str != "[]":
             if validate_json(criterium_list_str):
                 criterium_list = json.loads(criterium_list_str)
             else:
-                print("Error whilte validating json")
+                print("----------No valide criterium-json----------")
         else:
-            print("Error while parsing criterium_list")
+            print("----------Error while parsing criterium_list_str----------")
 
         for criterium in criterium_list:
             try:
-                Criterium.objects.create(name=html.unescape(str(criterium[0])), xPath=html.unescape(str(criterium[1])), criteria=criteria)
+                criterium_object = Criterium.objects.create(criterium_type=html.unescape(criterium['criteria_type']), name=html.unescape(criterium['name']), study=study)
+                conditions = criterium['conditions']
+
+                for c in conditions:
+                    Condition.objects.create(name=html.unescape(c['conditionName']), xPath=html.unescape(c['condtionxPath']), value_xPath=html.unescape(c['valuexPath']), criterium=criterium_object)
             except:
-                print("Error while creating criterium object")
+                 print("----------Error while creating criterium object or condition----------")
+
+    def write_information_need_in_db(self, study):
+        global information_need_list
+        information_need_list_str = self.request.get('Information_Needs[]')
+        if information_need_list_str and information_need_list_str != "[]":
+            if validate_json(information_need_list_str):
+                information_need_list = json.loads(information_need_list_str)
+            else:
+                print("----------No valide information-need-json----------")
+        else:
+            print("----------Error while parsing information_need_list_str----------")
+
+        for information_need in information_need_list:
+            try:
+                Information_Need.objects.create(criterium_type=html.unescape(information_need['informationName']), name=html.unescape(information_need['informationXPath']), study=study)
+            except:
+                 print("----------Error while creating information need object----------")
 
     def write_patient_and_CDAData_in_db(self, file):
         extractor = CDAExtractor(file)
@@ -52,16 +71,19 @@ class Database_Handler:
         patient = None
         if patient_list is None or len(patient_list) == 0:
             patientfullname = extractor.get_patient_name()
-
-            patient = Patient.objects.create(title="", #TODO add title
-                                          first_name=patientfullname['vornamen'][0],
-                                          middle_names= patientfullname['vornamen'][1],
-                                          last_name= patientfullname['nachname'][0],
-                                          birthdate=extractor.get_birthTime(),
-                                          patient_id=patient_id_from_cda)
+            try:
+                patient = Patient.objects.create(title="", #TODO add title
+                                              first_name=patientfullname['vornamen'][0],
+                                              middle_names= patientfullname['vornamen'][1],
+                                              last_name= patientfullname['nachname'][0],
+                                              birthdate=extractor.get_birthTime(),
+                                              patient_id=patient_id_from_cda)
+            except:
+                print("----------Error while creating Patient Object----------")
         else:
             # if patient already exist
             patient = patient_list[0]
+
         cda_id = extractor.get_cda_id()
         cda_list = CDAFile.objects.filter(cda_id = cda_id)
         if cda_list is None or len(cda_list) == 0:
@@ -72,5 +94,5 @@ class Database_Handler:
                                      upload_date=now,
                                      patient=patient)
         else:
-            print("CDA File exist already")
+            print("----------CDA File exist already - no db-save----------")
         del extractor

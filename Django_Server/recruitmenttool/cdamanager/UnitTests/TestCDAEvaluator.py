@@ -14,8 +14,8 @@ class TestCDAEvaluator(unittest.TestCase):
     xPath_no_valide = """$$$$$$/z/ordTarget[number(substring(patientRole/patient/birthTime/@value,1,4)) < 1820]/patientRole/patient/birthTime/@value"""
     # File mit Patienten aelter 6 Jahre
     cda_entlassungsbrief_aerztlich = "UnitTests/Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
-    cda_laborbefund = "UnitTests/Testdata/ELGA-043-Laborbefund_EIS-FullSupport_files_attached.xml"
-
+    cda_pflegebericht = "UnitTests/Testdata/modified_patient_example_data/CDA_Pflegebericht_von_Robert_Koch.xml"
+    cda_laborbefund = "UnitTests/Testdata/modified_patient_example_data/CDA_Laborbefund_von_Klaus.xml"
 
     no_valide_file = "no_valid_path"
 
@@ -33,6 +33,16 @@ class TestCDAEvaluator(unittest.TestCase):
         result = evaluator.evaluate_cda_file_Etree(
         evaluator, self.xPath_ns, self.cda_entlassungsbrief_aerztlich)
         self.assertEqual(self.NOT_SATISFIED, result)
+
+    def test_evaluate_laboratory_report(self):
+        result = evaluator.evaluate_cda_file_Etree(
+        evaluator, self.xPath_a_g_6, self.cda_laborbefund)
+        self.assertEqual(self.SATISFIED, result)
+
+    def test_evaluate_nursing_report(self):
+        result = evaluator.evaluate_cda_file_Etree(
+        evaluator, self.xPath_a_g_6, self.cda_pflegebericht)
+        self.assertEqual(self.NO_DATA, result) # birthtime UNK
 
     def test_evaluate_cda_file_no_data(self):
         result = evaluator.evaluate_cda_file_Etree(

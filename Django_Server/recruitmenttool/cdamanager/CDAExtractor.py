@@ -11,7 +11,7 @@ class CDAExtractor:
         self.cda_file = cda_file
         self.tree = ET.parse(self.cda_file)
         self.root = self.tree.getroot()
-        #TODO: find namespace out programmatcily
+        # find namespace out programmatcily if needed
         self.namespaces = {'': 'urn:hl7-org:v3',
                       'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
 
@@ -52,3 +52,23 @@ class CDAExtractor:
 
     def get_CDA_type(self):
         pass
+
+    def get_xPath_value(self, xPath, cda_file):
+        try:
+            root = self.get_root_from_xml(self, cda_file)
+        except:
+            return self.ERROR
+
+        namespaces = {'': 'urn:hl7-org:v3'}
+
+
+        try:
+            ##################
+            results = elementpath.select(root, xPath, namespaces)
+            print(results)
+        except elementpath.exceptions.ElementPathSyntaxError:
+            return self.ERROR
+
+        if results is not None and len(results) != 0:
+            return results
+        return self.NO_DATA

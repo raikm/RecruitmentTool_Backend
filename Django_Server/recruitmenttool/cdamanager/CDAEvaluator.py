@@ -16,25 +16,30 @@ class CDAEvaluator:
         COMPARISON_MAPPING = {'>', '>=', '<', '<=', "=", "!="}
 
         dictionary = dict()
+        global nodeList
+        try:
+            nodeList = n.relative.predicates
+        except AttributeError:
+            print("AttributeError while parsing basic path")
 
-        nodeList = n.relative.predicates
         templateList = []
-        for node in nodeList:
+        if nodeList is not None:
+            for node in nodeList:
 
-            def visit(node):
-                if type(node.right) is not str and node.right.op in list(COMPARISON_MAPPING):
-                    if "templateId" in str(node.right):
-                        templateList.append(eulxml.xpath.serialize(node.right))
+                def visit(node):
+                    if type(node.right) is not str and node.right.op in list(COMPARISON_MAPPING):
+                        if "templateId" in str(node.right):
+                            templateList.append(eulxml.xpath.serialize(node.right))
 
-            visit(node)
-            while node.left.op in list(OPERATOR_MAPPING):
-                node = node.left
                 visit(node)
-            if node.left.op in list(COMPARISON_MAPPING):
-                if "templateId" in str(node):
-                    templateList.append(eulxml.xpath.serialize(node.left))
+                while node.left.op in list(OPERATOR_MAPPING):
+                    node = node.left
+                    visit(node)
+                if node.left.op in list(COMPARISON_MAPPING):
+                    if "templateId" in str(node):
+                        templateList.append(eulxml.xpath.serialize(node.left))
 
-        dictionary["templatedId"] = templateList
+            dictionary["templatedId"] = templateList
 
         return dictionary
 

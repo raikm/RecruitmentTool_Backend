@@ -4,7 +4,7 @@ class XMLEvaluator:
 
     def evaluate_file_type(file_path):
         filename, file_extension = os.path.splitext(str(file_path))
-        if file_extension == "xml":
+        if file_extension == "xml" or ".xml":
             return True
         else:
             return False
