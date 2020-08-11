@@ -2,9 +2,9 @@ import xml.etree.ElementTree as ET
 import elementpath
 from datetime import datetime
 import sys
-sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
-from saxonc import *
-import saxonc
+# sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
+# from saxonc import *
+# import saxonc
 
 class CDAExtractor:
 
