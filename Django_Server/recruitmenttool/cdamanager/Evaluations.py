@@ -44,7 +44,7 @@ def evaluate_criterions(critierum_list, patient):
         criterium_result["conditions"] = []
 
         conditions = model.Condition.objects.all().filter(criterium_id =  criterium.id)
-
+        print(conditions)
         for condition in conditions:
             condition_result = {}
             condition_result["name"] = condition.name
@@ -55,7 +55,7 @@ def evaluate_criterions(critierum_list, patient):
 
             patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
 
-
+            print(patient_cda_files)
             for file in patient_cda_files:
                 evaluation_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.xPath, file.file)
                 values_result = extractor.get_xPath_value(evaluator, condition.value_xPath, file.file)

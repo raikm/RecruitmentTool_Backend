@@ -12,8 +12,8 @@ class Database_Handler:
 
     def __init__(self, request):
         self.request = request
-        self.file = file
-        self.extractor = CDAExtractor(self.file)
+        # self.file = file
+        # self.extractor = CDAExtractor(self.file)
 
     def write_study_in_db(self):
         try:
@@ -60,7 +60,7 @@ class Database_Handler:
 
         for information_need in information_need_list:
             try:
-                Information_Need.objects.create(criterium_type=html.unescape(information_need['informationName']), name=html.unescape(information_need['informationXPath']), study=study)
+                Information_Need.objects.create(name=html.unescape(information_need['informationName']), xPath=html.unescape(information_need['informationXPath']), study=study)
             except:
                  print("----------Error while creating information need object----------")
 

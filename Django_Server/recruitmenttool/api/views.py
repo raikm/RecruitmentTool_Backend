@@ -16,6 +16,7 @@ now = datetime.datetime.now(tz=timezone.utc)
 
 @csrf_exempt
 @api_view(('POST',))
+#TODO: RENAME create new study
 def create_new_criteria(request):
     if request.method == 'POST':
         r = request.data
@@ -44,7 +45,7 @@ def create_new_criteria(request):
 @csrf_exempt
 @api_view(('GET',))
 def create_new_criteria_DEBUG(request):
-    result = evaluate_request(28)
+    result = evaluate_request(221)
     return Response(result, status=status.HTTP_201_CREATED)
 
 

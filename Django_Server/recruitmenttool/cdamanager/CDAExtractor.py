@@ -1,11 +1,15 @@
 import xml.etree.ElementTree as ET
 import elementpath
 from datetime import datetime
-
+import sys
+sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
+from saxonc import *
+import saxonc
 
 class CDAExtractor:
 
 # Do note that one must avoid the // abbreviation whenever possible as it causes the whole document (subtree rooted at the context node) to be scanned.
+    ERROR = "ERROR"
 
     def __init__(self, cda_file):
         self.cda_file = cda_file
@@ -53,9 +57,21 @@ class CDAExtractor:
     def get_CDA_type(self):
         pass
 
+
+    def get_root_from_xml(self, cda_file):
+        # TODO: valid XML?
+        if type(cda_file) != str:
+            cda_file.seek(0)
+        try:
+            tree = ET.parse(cda_file)
+        except FileNotFoundError:
+            print("FILE NOT FOUND")  # TODO: better error handling
+
+        return tree.getroot()
+
     def get_xPath_value(self, xPath, cda_file):
         try:
-            root = self.get_root_from_xml(self, cda_file)
+            root = self.get_root_from_xml(cda_file)
         except:
             return self.ERROR
 
@@ -65,7 +81,8 @@ class CDAExtractor:
         try:
             ##################
             results = elementpath.select(root, xPath, namespaces)
-            print(results)
+
+            print(results.get_results())
         except elementpath.exceptions.ElementPathSyntaxError:
             return self.ERROR
 
