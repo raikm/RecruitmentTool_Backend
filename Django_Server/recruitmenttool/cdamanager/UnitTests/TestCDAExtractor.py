@@ -5,9 +5,8 @@ from datetime import datetime
 class TestCDAEvaluator(unittest.TestCase):
 
     # Testdata
-    cda_test_file = "/Volumes/Macintosh HDD/Benutzer/RaikMueller/PyCharmProjects/RecruitmentTool_Backend/resources/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
+    cda_test_file = "/home/ubuntu/Server/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/UnitTests/Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
     # File mit Patienten aelter 6 Jahre aber keine weiteren Infos
-    cda_simple_file = "/Volumes/Macintosh HDD/Benutzer/RaikMueller/PyCharmProjects/RecruitmentTool_Backend/resources/simple_birthday.xml"
     global extractor
 
     def setUp(self):

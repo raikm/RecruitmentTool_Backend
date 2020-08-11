@@ -58,37 +58,16 @@ class CDAEvaluator:
         return tree.getroot()
 
     def evaluate_cda_file_Etree(self, xPath, cda_file):
+        namespaces = {'': 'urn:hl7-org:v3'}
         try:
             root = self.get_root_from_xml(self, cda_file)
+            results = elementpath.select(root, xPath, namespaces)
+        except elementpath.exceptions.ElementPathSyntaxError:
+            return self.ERROR
         except:
             return self.ERROR
 
-        namespaces = {'': 'urn:hl7-org:v3'}
-
-        #TODO: Refactor
-        try:
-            results = elementpath.select(root, xPath, namespaces)
-            if results is None or len(results) == 0:
-                dictionary = self.get_properties_from_xpath(self, xPath)
-                template_ids = dictionary["templatedId"]
-                if template_ids is not None or len(template_ids) != 0:
-                    base = xPath.split("[")[0]
-                    predicates = ""
-                    for templateId in template_ids[:-1]:
-                        predicates += templateId + " and "
-                    predicates += template_ids[-1]
-                    _xPath = base + "[" + predicates + "]"
-                    part_results = elementpath.select(root, _xPath, namespaces)
-
-        except elementpath.exceptions.ElementPathSyntaxError:
-            return self.ERROR
-
         if results is not None and len(results) != 0:
-            return self.SATISFIED
-        elif part_results is not None and len(part_results) != 0:
-            return self.NOT_SATISFIED
-        else:
-            return self.NO_DATA
+            return results
 
-
-
+        return []

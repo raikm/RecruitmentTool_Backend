@@ -49,29 +49,30 @@ def evaluate_criterions(critierum_list, patient):
             condition_result = {}
             condition_result["name"] = condition.name
 
-            evaluation_result = NO_DATA
-            evaluation_result_text = "NO DATA WAS FOUND"
+            evaluation_result = []
+            values_result = []
             evaluation_related_cda = None
 
             patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
 
-            print(patient_cda_files)
+
+            #TODO: order patient_cda_files by date
+
             for file in patient_cda_files:
                 evaluation_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.xPath, file.file)
-                values_result = extractor.get_xPath_value(evaluator, condition.value_xPath, file.file)
+                values_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.value_xPath, file.file)
+                #TODO: negative_evaluation_result
                 if evaluation_result is NO_DATA:
                     continue
-                elif evaluation_result is NOT_SATISFIED:
-                    evaluation_result_text = "NO SATISFIED DATA FOUND"
-                    evaluation_related_cda = file.cda_id
+                if evaluation_result is ERROR:
                     continue
-                elif evaluation_result is SATISFIED:
-                    evaluation_result_text = "SATISFIED DATA"
+                #TODO: resturn ALL founds results with linked cda's
+                elif len(evaluation_result) > 1:
+                    evaluation_results = evaluation_result
                     evaluation_related_cda = file.cda_id
                     break
 
             condition_result["evaluation_result"] = evaluation_result
-            condition_result["evaluation_result_text"] = evaluation_result_text
             condition_result["evaluation_related_cda"] = evaluation_related_cda
             condition_result["values_result"] = values_result
             criterium_result["conditions"].append(condition_result)
@@ -89,12 +90,11 @@ def evaluate_information_need(information_need_list, patient):
         information_result["name"] = information.name
         patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
 
-        evaluation_result = NO_DATA
         evaluation_related_cda = None
-
+        values_result = []
         for file in patient_cda_files:
-            values_result = extractor.get_xPath_value(evaluator, information.xPath, file.file)
-            if evaluation_result is NO_DATA:
+            values_result = evaluator.evaluate_cda_file_Etree(evaluator, information.xPath, file.file)
+            if len(values_result) == 0:
                 continue
             evaluation_related_cda = file.cda_id
             break
