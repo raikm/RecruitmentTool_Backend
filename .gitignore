@@ -2,15 +2,9 @@ Django_Server/bin
 Django_Server/lib
 Django_Server/.idea
 Django_Server/recruitmenttool/cda_files
-Django_Server/.DS_Store
-.DS_Store
 Django_Server/recruitmenttool/recruitmenttool/cdamanager/.idea
-Django_Server/.DS_Store
 Django_Server/recruitmenttool/.DS_Store
-Django_Server/recruitmenttool/recruitmenttool/api/.DS_Store
-Django_Server/recruitmenttool/api/__pycache__/
-.DS_Store
-Django_Server/.DS_Store
+*.DS_Store
 eHealthConnector/*
 *.pyc
 Django_Server/recruitmenttool/db.sqlite3

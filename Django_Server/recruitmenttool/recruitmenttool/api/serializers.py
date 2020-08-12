@@ -20,6 +20,7 @@ class CriteriumSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class InformationNeedSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
         model = Information_Need
         fields = ('name', 'xPath')
 
