@@ -27,12 +27,13 @@ def evaluate_request(id):
     return json.dumps(patients_dic)
 
 
-
 def get_patient(patient):
     return serializer.PatientSerializer(patient).data
 
+
 def get_condtion(condition):
     return serializer.ConditionSerializer(condition).data
+
 
 def evaluate_criterions(critierum_list, patient):
     criterium_results = []
@@ -42,45 +43,43 @@ def evaluate_criterions(critierum_list, patient):
         criterium_result["criterium_type"] = criterium.criterium_type
         criterium_result["conditions"] = []
 
-        conditions = model.Condition.objects.all().filter(criterium_id =  criterium.id)
-        print(conditions)
+        conditions = model.Condition.objects.all().filter(criterium_id=criterium.id)
         for condition in conditions:
             condition_result = {}
             condition_result["name"] = condition.name
 
+            evaluation_results = {}
+            evaluation_results["hits"] = []
+            value_results = {}
+            value_results["values"] = []
+
+            patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient.id)
+
+            # TODO: order patient_cda_files by date
             evaluation_result = []
-            evaluation_results = []
-            values_result = []
-            evaluation_related_cda = None
-
-            patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
-
-
-            #TODO: order patient_cda_files by date
-
             for file in patient_cda_files:
                 evaluation_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.xPath, file.file)
                 values_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.value_xPath, file.file)
-                #TODO: negative_evaluation_result
-                if evaluation_result is NO_DATA:
-                    continue
-                if evaluation_result is ERROR:
-                    continue
-                if len(evaluation_result) == 0:
-                    continue
-                #TODO: resturn ALL founds results with linked cda's
-                if len(evaluation_result) > 0:
-                    evaluation_results.append(evaluation_result)
-                    evaluation_related_cda = file.cda_id
-                    continue
+                # TODO: negative_evaluation_result
 
-            condition_result["evaluation_result"] = evaluation_results
-            condition_result["evaluation_related_cda"] = evaluation_related_cda
-            condition_result["values_result"] = values_result
+                if len(evaluation_result) > 0:
+                    hit = {"hit_result": evaluation_result, "cda_id": file.cda_id}
+                    evaluation_results["hits"].append(hit)
+                    evaluation_results["evaluation_result_summary"] = "hit"
+                if len(values_result) > 0:
+                    value_result = {"value_result": values_result, "cda_id": file.cda_id}
+                    value_results["values"].append(value_result)
+                continue
+            if len(evaluation_results["hits"]) == 0:
+                evaluation_results["hits"] = []
+                evaluation_results["value_results"] = value_results
+                evaluation_results["evaluation_result_summary"] = "no_hit"
+
+            condition_result["evaluation_results"] = evaluation_results
             criterium_result["conditions"].append(condition_result)
 
-        #TODO: change if negative xPaths are implemented
-        criterium_result["criterium_summary_result"] = 0 if len(condition_result["evaluation_result"]) > 0 else 1
+        # TODO: change if negative xPaths are implemented
+        criterium_result["criterium_summary_result"] = "hit" if len(condition_result["evaluation_results"]) > 0 else "no_hit"
         criterium_results.append(criterium_result)
 
     return criterium_results
@@ -91,7 +90,7 @@ def evaluate_information_need(information_need_list, patient):
     for information in information_need_list:
         information_result = {}
         information_result["name"] = information.name
-        patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
+        patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient.id)
 
         evaluation_related_cda = None
         values_result = []
