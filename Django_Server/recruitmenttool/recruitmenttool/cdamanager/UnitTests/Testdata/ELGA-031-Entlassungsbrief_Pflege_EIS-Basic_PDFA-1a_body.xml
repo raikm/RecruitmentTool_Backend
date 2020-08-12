@@ -1,0 +1,1756 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<?xml-stylesheet type="text/xsl" href="ELGA_Stylesheet_v1.0.xsl"?>
+<ClinicalDocument xmlns="urn:hl7-org:v3" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<!--
+		=======================================================================
+		ELGA CDA Implementierungsleitfäden
+
+		*** CDA Demo-Dokument ***
+		Dies ist ein Beispielbefund. Bei den Inhalten handelt es sich um synthetische Mustertexte und keinesfalls um personenbezogene Echtdaten oder realistische Befunde.
+		Das Beispiel veranschaulicht die technischen Möglichkeiten unter Verwendung eines Maximums der erlaubten Optionen.
+
+		Spezieller Leitfaden: Entlassungsbrief (Pflege) Version 2.06.2
+		ELGA Interoperabilitätsstufe (EIS) "Basic"
+
+		auf der Basis des allgemeinen Leitfadens: HL7 Implementation Guide for CDA® R2: Allgemeiner Implementierungsleitfaden für ELGA CDA Dokumente
+
+		Autoren:
+			Jürgen Brandstätter, CodeWerk Software Services and Development GmbH
+			Oliver Kuttin, ELGA GmbH
+			Stefan Sabutsch, ELGA GmbH
+			Carina Seerainer, ELGA GmbH
+			Andrea Klostermann, ELGA GmbH
+			
+		Dokumentrevision:	2.06.2
+		Datum: 				08.11.2017
+
+		Die Kommentare in diesem CDA Dokument dienen lediglich der Orientierungshilfe und sind nicht 
+		Bestandteil einer konkreten Implementierung!
+		=======================================================================
+		
+
+	
+		=======================================================================
+	-->
+	<!--
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+
+			Administrative Daten "CDA Header"
+
+			siehe Allgemeiner Leitfaden, Kapitel 6
+
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+	-->
+	<!--
+			========================================================================
+			========================================================================
+			Dokumentenstruktur
+			siehe Allgemeiner Leitfaden, Kapitel 6.2
+			========================================================================
+			========================================================================
+	-->
+	<!--
+		Hoheitsbereich des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.3)
+	-->
+	<realmCode code="AT"/>
+	
+	<!--
+		Dokumentformat (siehe Allgemeiner Leitfaden, Kapitel 6.2.4)
+	-->
+	<typeId root="2.16.840.1.113883.1.3" extension="POCD_HD000040"/>
+	
+	<!--
+		ELGA Implementierungsleitfaden-Kennzeichnung (siehe Allgemeiner Leitfaden, Kapitel 6.2.5)
+	-->
+	<!-- Folgt dem Template des Allgemeinen Implementierungsleitfadens "CDA Dokumente im österreichischen Gesundheitswesen" -->
+	<templateId root="1.2.40.0.34.11.1" assigningAuthorityName="ELGA"/>
+
+	<!-- Folgt dem Template des Speziellen Implementierungsleitfadens "Entlassungsbrief (Pflege)" -->
+	<templateId root="1.2.40.0.34.11.3" assigningAuthorityName="ELGA"/>
+	
+	<!-- Folgt dem Template des Speziellen Implementierungsleitfadens "Entlassungsbrief (Pflege)", ELGA Interoperabilitätsstufe (EIS) "Basic" -->
+	<templateId root="1.2.40.0.34.11.3.0.1" assigningAuthorityName="ELGA"/>
+	
+	<!--
+		Dokumenten-Id (siehe Allgemeiner Leitfaden, Kapitel 6.2.6)
+	-->
+	<id root="1.2.40.0.34.99.4613.3.1" extension="134F993.1" assigningAuthorityName="Amadeus Spital"/>
+	
+	<!--
+		Dokumentenklasse (siehe Allgemeiner Leitfaden, Kapitel 6.2.7)
+	-->
+	<code code="34745-0" displayName="Nurse Discharge summary" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>
+	
+	<!--
+		Titel des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.8)
+	-->
+	<title>Pflege-Entlassungsbrief</title>
+	
+	<!--
+		Erstellungsdatum des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.9)
+	-->
+	<effectiveTime value="20150730130100+0200"/>
+	
+	<!--
+		Vertraulichkeitscode (siehe Allgemeiner Leitfaden, Kapitel 6.2.10)
+	-->
+	<confidentialityCode code="N" displayName="normal" codeSystem="2.16.840.1.113883.5.25" codeSystemName="HL7:Confidentiality"/>
+	
+	<!--
+		Sprachcode des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.11)
+	-->
+	<languageCode code="de-AT"/>
+	
+	<!--
+		Versionierung des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.2.12)
+	-->
+	<setId root="1.2.40.0.34.99.4613.3.1" extension="134F993" assigningAuthorityName="Amadeus Spital"/>
+	<versionNumber value="1"/>
+	
+	
+	
+	<!--
+			========================================================================
+			========================================================================
+			Teilnehmende Parteien
+			siehe Allgemeiner Leitfaden, Kapitel 6.3
+			========================================================================
+			========================================================================
+	-->
+	<!--
+		========================================================================
+		Patient (siehe Allgemeiner Leitfaden, Kapitel 6.3.1)
+		========================================================================
+	-->
+	<recordTarget>
+		<patientRole>
+		
+			<!-- 
+				IDs des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.2)
+			-->
+			<!-- Identifikation des Patienten im lokalen System -->
+			<id root="1.2.40.0.34.99.111.1.2" extension="4711" assigningAuthorityName="Amadeus Spital"/>
+			
+			<!-- Sozialversicherungsnummer des Patienten	-->
+			<id root="1.2.40.0.10.1.4.3.1" extension="1111241249" assigningAuthorityName="Österreichische Sozialversicherung"/>
+			
+			<!--
+				Adresse des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.3)
+			-->
+			<addr use="H">
+				<streetAddressLine>Musterstraße 13a</streetAddressLine>
+				<postalCode>7000</postalCode>
+				<city>Eisenstadt</city>
+				<state>Burgenland</state>
+				<country>AUT</country>
+			</addr>
+			
+			<!--
+				Kontaktdaten des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.4)
+			-->
+			<telecom use="H" value="tel:+43.2682.40400"/>
+			<telecom use="MC" value="tel:+43.664.1234567"/>
+			<telecom value="mailto:herberthannes.mustermann@provider.at"/>
+			
+			<patient>
+			
+				<!-- 
+					Name des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.5)
+				-->
+				<name>
+					<prefix qualifier="AC">Dipl.Ing.</prefix>
+					<prefix qualifier="PR">Hofrat</prefix>
+					<given>Herbert</given>
+					<given>Hannes</given>
+					<family>Mustermann</family>
+					<family qualifier="BR">VorDerHeirat</family>
+					<suffix qualifier="AC">BSc</suffix>
+					<suffix qualifier="AC">MBA</suffix>
+				</name>
+				
+				<!--
+					Geschlecht des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.6)
+				-->
+				<administrativeGenderCode code="M" displayName="Male" codeSystem="2.16.840.1.113883.5.1" codeSystemName="HL7:AdministrativeGender"/>
+				
+				<!--
+					Geburtsdatum des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.7)
+				-->
+				<birthTime value="19491224"/>
+				
+				<!--
+					Familienstand des Patienten  (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.8)
+				-->
+				<maritalStatusCode code="M" displayName="Married" codeSystem="2.16.840.1.113883.5.2" codeSystemName="HL7:MaritalStatus"/>
+				
+				<!--
+					Religionszugehörigkeit des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.9)
+				 -->
+				<religiousAffiliationCode code="101" displayName="Römisch-Katholisch" codeSystem="2.16.840.1.113883.2.16.1.4.1" codeSystemName="HL7.AT:ReligionAustria"/>
+				
+				<!-- 
+					Vormund/Sachwalter des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.12)
+					"Organisation"
+				
+				<guardian>
+								
+						Eine Organisation als Guardian, hier als Strukturbeispiel
+					
+					<addr>
+						<streetAddressLine>Kinderdorfstraße 1</streetAddressLine>
+						<postalCode>2371</postalCode>
+						<city>Hinterbrühl</city>
+						<state>Niederösterreich</state>
+						<country>AUT</country>
+					</addr>
+					
+					
+						Kontaktdaten des Vormunds/Sachwalters (Organisation)
+					
+					<telecom use="H" value="tel:+43.2236.2928"/>
+					<telecom use="WP" value="tel:+43.2236.9000"/>
+					
+					<guardianOrganization>
+	
+						
+							Name der Vormund/Sachwalter-Organisation
+						
+						<name>SOS Kinderdorf Hinterbrühl</name>
+
+					</guardianOrganization>
+				</guardian>
+				
+				-->
+				<!-- 
+					Vormund/Sachwalter des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.12)
+					"Person"
+				-->
+				<guardian>
+				
+					<!--
+						Adresse des Vormunds/Sachwalters (Person)
+					-->
+					<addr>
+						<streetAddressLine>Musterstraße 1234</streetAddressLine>
+						<postalCode>8011</postalCode>
+						<city>Graz</city>
+						<state>Steiermark</state>
+						<country>AUT</country>
+					</addr>
+					
+					<!--
+						Kontaktdaten des Vormunds/Sachwalters (Person)
+					-->
+					<telecom use="MC" value="tel:+43.676.1234567"/>
+					<telecom use="H" value="tel:+43.316.717.653.9939"/>
+					<telecom use="WP" value="tel:+43.316.608.271.9000"/>
+					
+					<guardianPerson>
+					
+						<!--
+							Name der Vormund/Sachwalter-Organisation
+						-->
+						<name>
+							<given>Susi</given>
+							<family>Sorgenvoll</family>
+						</name>
+						
+					</guardianPerson>
+					
+				</guardian>
+				
+				<!-- 
+					Geburtsort des Patienten (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.14)
+				-->
+				<birthplace>
+					<place>
+						<addr>Graz</addr>
+					</place>
+				</birthplace>
+				
+			</patient>
+		</patientRole>
+	</recordTarget>
+	
+	
+	<!--
+		========================================================================
+		Verfasser des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2)
+		========================================================================
+	-->
+	<author>
+	
+		<!--
+			Funktionscode des Verfassers des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.1)
+		-->
+		<functionCode code="DGKSP" displayName="Diplomierte Gesundheits- und Krankenschwester/Diplomierter Gesundheits- und Krankenpfleger" codeSystem="1.2.40.0.34.99.4613.3.4" codeSystemName="Amadeus Spital - Funktionscodes"/>
+		
+		<!--
+			Zeitpunkt der Erstellung (z.B. des Diktats) (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.2)
+		-->
+		<time value="20130324082015+0100"/>
+		
+		<assignedAuthor>
+		
+			<!--  
+				Identifikation des Verfassers des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.3)
+			-->
+			<id root="1.2.40.0.34.99.4613.3.3" extension="1111" assigningAuthorityName="Amadeus Spital"/>
+			
+			<!--  
+				Fachrichtung des Verfassers des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.4)
+			-->
+			<code code="212" displayName="Diplomierte Gesundheits- und Krankenschwester/Diplomierter Gesundheits- und Krankenpfleger" codeSystem="1.2.40.0.34.5.2" codeSystemName="ELGA_GTelVoGDARollen"/>
+
+			<!--
+				Kontaktdaten des Verfassers des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.5)
+			-->
+			<telecom use="WP" value="tel:+43.6138.3453446.1111"/>
+			
+			<!--
+				Personendaten des Verfassers des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.6)
+			-->
+			<assignedPerson>
+			
+				<!-- Name des Verfassers des Dokuments -->
+				<name>
+					<given>Isabella</given>
+					<family>Stern</family>
+				</name>
+				
+			</assignedPerson>
+			
+	
+			<!--
+				Organisation, in deren Auftrag der Verfasser des Dokuments die Dokumentation verfasst hat (siehe Allgemeiner Leitfaden, Kapitel 6.3.2.3.1.7)
+			-->
+			<representedOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index
+				-->
+				<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+
+				<!--
+					Name der Organisation
+				-->
+				<name>Amadeus Spital - Chirurgische Abteilung</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation
+				-->
+				<telecom value="tel:+43.6138.3453446.0"/>
+				<telecom value="fax:+43.6138.3453446.4674"/>
+				<telecom value="mailto:info@amadeusspital.at"/>
+				<telecom value="http://www.amadeusspital.at"/>
+				
+				<!--
+					Adresse der Organisation
+				-->
+				<addr>
+					<streetName>Mozartgasse</streetName>
+					<houseNumber>1-7</houseNumber>
+					<postalCode>5350</postalCode>
+					<city>St.Wolfgang</city>
+					<state>Salzburg</state>
+					<country>AUT</country>
+				</addr>
+				
+			</representedOrganization>
+			
+		</assignedAuthor>
+	</author>
+	
+	<!--
+		========================================================================
+		Personen der Dateneingabe (siehe Allgemeiner Leitfaden, Kapitel 6.3.3)
+		========================================================================
+	-->
+	<dataEnterer>
+	
+		<!--
+			Zeitpunkt des Schreibens (siehe Allgemeiner Leitfaden, Kapitel 6.3.3.2.2)
+		-->
+		<time value="20130324082015+0100"/>
+		
+		<!--
+			Personendaten der schreibenden Person (siehe Allgemeiner Leitfaden, Kapitel 6.3.3.2.3)
+		-->
+		<assignedEntity>
+		
+			<!--
+				ID der schreibenden Person
+			-->
+			<id nullFlavor="UNK"/>
+			
+			<assignedPerson>
+				<!--
+					Name der schreibenden Person
+				-->
+				<name>
+					<given>Maria</given>
+					<family>Bauer</family>
+				</name>
+			</assignedPerson>
+			
+		</assignedEntity>
+	</dataEnterer>
+	
+	<!--
+		========================================================================
+		Verwahrer des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.4)
+		========================================================================
+	-->
+	<custodian>
+		<assignedCustodian>
+			<representedCustodianOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index (siehe Allgemeiner Leitfaden, Kapitel 6.3.4.2.2)
+				-->
+				<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+
+				<!--
+					Name der Organisation (siehe Allgemeiner Leitfaden, Kapitel 6.3.4.2.3)
+				-->
+				<name>Amadeus Spital</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation (siehe Allgemeiner Leitfaden, Kapitel 6.3.4.2.4)
+				-->
+				<telecom value="tel:+43.6138.3453446.0"/>
+					
+				<!--
+					Adresse der Organisation (siehe Allgemeiner Leitfaden, Kapitel 6.3.4.2.5)
+				-->
+				<addr>
+					<streetName>Mozartgasse</streetName>
+					<houseNumber>1-7</houseNumber>
+					<postalCode>5350</postalCode>
+					<city>St.Wolfgang</city>
+					<state>Salzburg</state>
+					<country>AUT</country>
+				</addr>
+
+			</representedCustodianOrganization>
+		</assignedCustodian>
+	</custodian>
+	
+	<!--
+		========================================================================
+		Beabsichtigte Empfänger des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.5)
+		========================================================================
+	-->
+	<!--
+		+++++++++++++++++
+		PRIMÄRER Empfänger
+		+++++++++++++++++
+	-->
+	<informationRecipient typeCode="PRCP">
+		<intendedRecipient>
+		
+			<!--
+				Identifikation des beabsichtigten primären Empfängers aus dem GDA-Index (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.2)
+			-->
+			<id nullFlavor="UNK"/>
+			
+			<!--
+				Personendaten des beabsichtigten primären Empfängers (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.3)
+			-->
+			<informationRecipient>
+				<name>
+					<prefix qualifier="AC">Univ.-Prof. Dr.</prefix>
+					<given>Herbert</given>
+					<family>Primärer-Empfänger</family>
+				</name>
+			</informationRecipient>
+			
+			<!--
+				Organisation, der der beabsichtigte primäre Empfänger angehört (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.4)
+			-->
+			<receivedOrganization>
+				<!--
+					Identifikation der Organisation des beabsichtigten primären Empfängers aus dem GDA-Index
+				-->
+				<id nullFlavor="UNK"/>
+				
+				<!--
+					Name der Organisation des beabsichtigten primären Empfängers
+				-->
+				<name>Ordination Dr. Primärer-Empfänger</name>
+				
+				<!--
+					Kontaktdaten der Organisation des beabsichtigten primären Empfängers
+				-->
+				<telecom value="tel:0512.1234567"/>
+				<telecom value="fax:0512.1234567.11"/>
+				<telecom value="mailto:office@ordination-empfaenger.at"/>
+				<telecom value="http://www.ordination-empfaenger.at"/>
+				<telecom value="me:12345678791"/>
+				
+				<!--
+					Adresse der Organisation des beabsichtigten primären Empfängers
+				-->
+				<addr>
+					<streetName>Musterstraße</streetName>
+					<houseNumber>27/1/13</houseNumber>
+					<postalCode>6020</postalCode>
+					<city>Innsbruck</city>
+					<country>AUT</country>
+				</addr>
+			</receivedOrganization>
+			
+		</intendedRecipient>
+	</informationRecipient>
+	
+	<!--
+		+++++++++++++++++
+		SEKUNDÄRER Empfänger
+		+++++++++++++++++
+	 -->
+	<informationRecipient typeCode="TRC">
+		<intendedRecipient>
+			
+			<!--
+				Identifikation des beabsichtigten sekundären Empfängers aus dem GDA-Index (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.2)
+			-->
+			<id nullFlavor="UNK"/>
+			
+			<!--
+				Personendaten des beabsichtigten sekundären Empfängers (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.3)
+			-->
+			<informationRecipient>
+				<name>
+					<prefix qualifier="AC">Dr.</prefix>
+					<given>Walter</given>
+					<family>Empfänger Sekundär</family>
+				</name>
+			</informationRecipient>
+			
+			<!--
+				Organisation, der der beabsichtigte primäre Empfänger angehört (siehe Allgemeiner Leitfaden, Kapitel 6.3.5.2.4)
+			-->
+			<receivedOrganization>
+				<!--
+					Identifikation der Organisation des beabsichtigten sekundären Empfängers aus dem GDA-Index
+				-->
+				<id nullFlavor="UNK"/>
+				
+				<!--
+					Name der Organisation des beabsichtigten sekundären Empfängers
+				-->
+				<name>Ordination Dr. Sekundär</name>
+				
+				<!--
+					Kontaktdaten der Organisation des beabsichtigten sekundären Empfängers
+				-->
+				<telecom value="tel:0512.1234567"/>
+				<telecom value="fax:0512.1234567.11"/>
+				<telecom value="mailto:office@ordination-sekundaer.at"/>
+				<telecom value="http://www.ordination-sekundaer.at"/>
+				<telecom value="me:12345678792"/>
+				
+				<!--
+					Adresse der Organisation des beabsichtigten sekundären Empfängers
+				-->
+				<addr>
+					<streetName>Sekundärstraße</streetName>
+					<houseNumber>22</houseNumber>
+					<postalCode>6020</postalCode>
+					<city>Innsbruck</city>
+					<country>AUT</country>
+				</addr>
+			</receivedOrganization>
+			
+		</intendedRecipient>
+	</informationRecipient>
+	
+	<!--
+		========================================================================
+		Rechtlicher Unterzeichner (siehe Allgemeiner Leitfaden, Kapitel 6.3.6)
+		========================================================================
+	-->
+	<legalAuthenticator>
+	
+		<!-- 
+			Zeitpunkt der Unterzeichnung (siehe Allgemeiner Leitfaden, Kapitel 6.3.6.2.2)
+		-->
+		<time value="20130324082015+0100"/>
+		
+		<!-- 
+			Signaturcode (siehe Allgemeiner Leitfaden, Kapitel 6.3.6.2.3)
+		-->
+		<signatureCode code="S"/>
+		
+		
+		<!--
+			Personen- und Organisationsdaten des Rechtlichen Unterzeichners des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.6.2.4)
+		-->
+		<assignedEntity>
+		
+			<!--  
+				Identifikation des Rechtlichen Unterzeichners des Dokuments
+			-->
+			<id root="1.2.40.0.34.99.4613.3.3" extension="2222" assigningAuthorityName="Amadeus Spital"/>
+			
+			<!--
+				Kontaktdaten des Rechtlichen Unterzeichners des Dokuments
+			-->
+			<telecom use="WP" value="tel:+43.6138.3453446.2222"/>
+			
+			<!--
+				Personendaten des Rechtlichen Unterzeichners des Dokuments
+			-->
+			<assignedPerson>
+			
+				<!-- Name des Rechtlichen Unterzeichners des Dokuments -->
+				<name>
+					<given>Sigrid</given>
+					<family>Kollmann</family>
+				</name>
+				
+			</assignedPerson>
+			
+	
+			<!--
+				Organisation, in deren Auftrag der Rechtlichen Unterzeichners des Dokuments die Dokumentation unterzeichnet hat
+			-->
+			<representedOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index
+				-->
+				<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+
+				<!--
+					Name der Organisation
+				-->
+				<name>Amadeus Spital - Chirurgische Abteilung</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation
+				-->
+				<telecom value="tel:+43.6138.3453446.0"/>
+				<telecom value="fax:+43.6138.3453446.4674"/>
+				<telecom value="mailto:info@amadeusspital.at"/>
+				<telecom value="http://www.amadeusspital.at"/>
+				
+				<!--
+					Adresse der Organisation
+				-->
+				<addr>
+					<streetName>Mozartgasse</streetName>
+					<houseNumber>1-7</houseNumber>
+					<postalCode>5350</postalCode>
+					<city>St.Wolfgang</city>
+					<state>Salzburg</state>
+					<country>AUT</country>
+				</addr>
+				
+			</representedOrganization>
+			
+		</assignedEntity>
+	</legalAuthenticator>
+	
+	
+	<!--
+		========================================================================
+		Weitere Unterzeichner (siehe Allgemeiner Leitfaden, Kapitel 6.3.7)
+		========================================================================
+	-->
+	<authenticator>
+	
+		<!-- 
+			Zeitpunkt der Unterzeichnung (siehe Allgemeiner Leitfaden, Kapitel 6.3.7.2.2)
+		-->
+		<time value="20130324081915+0100"/>
+		
+		<!-- 
+			Signaturcode (siehe Allgemeiner Leitfaden, Kapitel 6.3.7.2.3)
+		-->
+		<signatureCode code="S"/>
+		
+		<!--
+			Personen- und Organisationsdaten des Weiteren Unterzeichners des Dokuments (siehe Allgemeiner Leitfaden, Kapitel 6.3.7.2.4)
+		-->
+		<assignedEntity>
+		
+			<!--  
+				Identifikation des Weiteren Unterzeichners des Dokuments
+			-->
+			<id root="1.2.40.0.34.99.4613.3.3" extension="3333" assigningAuthorityName="Amadeus Spital"/>
+			
+			<!--
+				Kontaktdaten des Weiteren Unterzeichners des Dokuments
+			-->
+			<telecom use="WP" value="tel:+43.6138.3453446.3333"/>
+			
+			<!--
+				Personendaten des Weiteren Unterzeichners des Dokuments
+			-->
+			<assignedPerson>
+			
+				<!-- Name des Weiteren Unterzeichners des Dokuments -->
+				<name>
+					<given>Walter</given>
+					<family>Hummel</family>
+				</name>
+				
+			</assignedPerson>
+			
+	
+			<!--
+				Organisation, in deren Auftrag der Weiteren Unterzeichner des Dokuments die Dokumentation unterzeichnet hat
+			-->
+			<representedOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index
+				-->
+				<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+
+				<!--
+					Name der Organisation
+				-->
+				<name>Amadeus Spital - Chirurgische Abteilung</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation
+				-->
+				<telecom value="tel:+43.6138.3453446.0"/>
+				<telecom value="fax:+43.6138.3453446.4674"/>
+				<telecom value="mailto:info@amadeusspital.at"/>
+				<telecom value="http://www.amadeusspital.at"/>
+				
+				<!--
+					Adresse der Organisation
+				-->
+				<addr>
+					<streetName>Mozartgasse</streetName>
+					<houseNumber>1-7</houseNumber>
+					<postalCode>5350</postalCode>
+					<city>St.Wolfgang</city>
+					<state>Salzburg</state>
+					<country>AUT</country>
+				</addr>
+				
+			</representedOrganization>
+		</assignedEntity>
+	</authenticator>
+
+
+
+	<!--
+			========================================================================
+			========================================================================
+			Weitere Beteiligte
+			siehe Allgemeiner Leitfaden, Kapitel 6.3.8
+			========================================================================
+			========================================================================
+	-->
+	<!-- 
+		Medizinischer Ansprechpartner (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.2.2)
+	-->
+	<participant typeCode="CALLBCK">
+		<templateId root="1.2.40.0.34.11.1.1.1"/>
+		<associatedEntity classCode="PROV">
+		
+			<!--
+				Verpflichtende Telefonnummer des fachlichen Ansprechpartners
+			-->
+			<telecom use="WP" value="tel:+43.6138.3453446.1"/>
+			
+			<associatedPerson>
+				<!--
+					Name des Fachlichen Ansprechpartners
+				-->
+				<name>
+					<prefix>DGKS</prefix>
+					<given>Waltraud</given>
+					<family>Pfleger</family>
+				</name>
+			</associatedPerson>
+			
+			<!--
+				Organisation des Fachlichen Ansprechpartners
+			-->
+			<scopingOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index
+				-->
+				<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+
+				<!--
+					Name der Organisation
+				-->
+				<name>Amadeus Spital - Chirurgische Abteilung</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation
+				-->
+				<telecom value="tel:+43.6138.3453446.0"/>
+				<telecom value="fax:+43.6138.3453446.4674"/>
+				<telecom value="mailto:info@amadeusspital.at"/>
+				<telecom value="http://www.amadeusspital.at"/>
+
+				<!--
+					Adresse der Organisation
+				-->
+				<addr>
+					<streetName>Mozartgasse</streetName>
+					<houseNumber>1-7</houseNumber>
+					<postalCode>5350</postalCode>
+					<city>St.Wolfgang</city>
+					<state>Salzburg</state>
+					<country>AUT</country>
+				</addr>
+				
+			</scopingOrganization>
+			
+		</associatedEntity>
+	</participant>
+	
+	<!-- 
+		Einweisender Arzt (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.3.2)
+	-->
+	<participant typeCode="REF">
+		<templateId root="1.2.40.0.34.11.1.1.2"/>
+		<associatedEntity classCode="PROV">
+			
+			<!--
+				Identifikation des einweisenden Arztes (Person) aus dem GDA-Index
+			-->
+			<id nullFlavor="UNK"/>
+			
+			<!--
+				Personendaten des einweisenden Arztes
+			-->
+			<associatedPerson>
+				<name>
+					<prefix qualifier="AC">Univ.-Prof. Dr.</prefix>
+					<given>Herbert</given>
+					<family>Einweiser</family>
+				</name>
+			</associatedPerson>
+			
+			<!--
+				Organisation, der der einweisenden Arzt angehört
+			-->
+			<scopingOrganization>
+				<!--
+					Identifikation der Organisation des Einweisers aus dem GDA-Index
+				-->
+				<id nullFlavor="UNK"/>
+				
+				<!--
+					Name der Organisation des einweisenden Arztes
+				-->
+				<name>Ordination Dr.Einweiser</name>
+				
+				<!--
+					Kontaktdaten der Organisation des einweisenden Arztes
+				-->
+				<telecom value="tel:0512.1234567"/>
+				<telecom value="fax:0512.1234567.11"/>
+				<telecom value="mailto:office@ordination-einweiser.at"/>
+				<telecom value="http://www.ordination-einweiser.at"/>
+				<telecom value="me:12345678791"/>
+				
+				<!--
+					Adresse der Organisation des einweisenden Arztes
+				-->
+				<addr>
+					<streetName>Musterstraße</streetName>
+					<houseNumber>27/1/13</houseNumber>
+					<postalCode>6020</postalCode>
+					<city>Innsbruck</city>
+					<country>AUT</country>
+				</addr>
+			</scopingOrganization>
+			
+		</associatedEntity>
+	</participant>
+
+	<!-- 
+		Hausarzt (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.4.2)
+	-->
+	<participant typeCode="IND">
+		<templateId root="1.2.40.0.34.11.1.1.3"/>
+		<functionCode code="PCP" displayName="primary care physician" codeSystem="2.16.840.1.113883.5.88" codeSystemName="HL7:ParticipationFunction"/>
+		<associatedEntity classCode="PROV">
+
+			<!--
+				Identifikation des Hausarztes (Person) aus dem GDA-Index
+			-->
+			<id nullFlavor="UNK"/>
+			
+			<!--
+				Personendaten des Hausarztes
+			-->
+			<associatedPerson>
+				<name>
+					<prefix qualifier="AC">Dr.</prefix>
+					<given>Walter</given>
+					<family>Empfänger Sekundär</family>
+				</name>
+			</associatedPerson>
+			
+			<!--
+				Organisation, der der Hausarzt angehört
+			-->
+			<scopingOrganization>
+				<!--
+					Identifikation der Organisation des Hausarztes
+				-->
+				<id nullFlavor="UNK"/>
+				
+				<!--
+					Name der Organisation des Hausarztes
+				-->
+				<name>Ordination Dr. Sekundär</name>
+				
+				<!--
+					Kontaktdaten der Organisation Hausarztes
+				-->
+				<telecom value="tel:0512.1234567"/>
+				<telecom value="fax:0512.1234567.11"/>
+				<telecom value="mailto:office@ordination-sekundaer.at"/>
+				<telecom value="http://www.ordination-sekundaer.at"/>
+				<telecom value="me:12345678792"/>
+				
+				<!--
+					Adresse der Organisation des Hausarztes
+				-->
+				<addr>
+					<streetName>Sekundärstraße</streetName>
+					<houseNumber>22</houseNumber>
+					<postalCode>6020</postalCode>
+					<city>Innsbruck</city>
+					<country>AUT</country>
+				</addr>
+			</scopingOrganization>
+			
+		</associatedEntity>
+	</participant>
+	
+	<!-- 
+		Notfall-Kontakt / Auskunftsberechtigte Person (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.5.2)
+	-->
+	<participant typeCode="IND">
+		<templateId root="1.2.40.0.34.11.1.1.4"/>
+		<associatedEntity classCode="ECON">
+		
+			<!--
+				Verwandtschaftsverhältnis zum Notfall-Kontakts / Auskunftsberechtigte Person 
+			-->
+			<code code="DAU" displayName="natural daughter" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7:RoleCode"/>
+
+			<!--
+				Adresse des Notfall-Kontakts / Auskunftsberechtigte Person
+			-->
+			<addr>Heimstrasse 1, 1220 Wien</addr>
+
+			<!--
+				Kontaktdaten des Notfall-Kontakts / Auskunftsberechtigte Person
+			-->
+			<telecom use="MC" value="tel:+43.664.12345678"/>
+			
+			<!--
+				Personendaten des Notfall-Kontakts / Auskunftsberechtigte Person 
+			-->
+			<associatedPerson>
+				<name>Julia Tochter</name>
+			</associatedPerson>
+
+			<!-- Organisation des Notfallkontakts (z.B.: Behörde) -->
+			<scopingOrganization>
+				<name>Jugendamt Wien</name>
+			</scopingOrganization>
+			
+		</associatedEntity>
+	</participant>
+	
+	<!-- 
+		Angehörige (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.6.2)
+	-->
+	<participant typeCode="IND">
+		<templateId root="1.2.40.0.34.11.1.1.5"/>
+		<associatedEntity classCode="PRS">
+		
+			<!--
+				Verwandtschaftsverhältnis zum Angehörigen 
+			-->
+			<code code="MTH" displayName="Mother" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7:RoleCode"/>
+
+			<!--
+				Adresse des Angehörigen
+			-->
+			<addr>Heimstrasse 1, 1220 Wien</addr>
+
+			<!--
+				Kontaktdaten des Angehörigen
+			-->
+			<telecom use="MC" value="tel:+43.664.98765432"/>
+			
+			<!--
+				Personendaten des Angehörigen
+			-->
+			<associatedPerson>
+				<name>Hertha Mutter</name>
+			</associatedPerson>
+			
+		</associatedEntity>
+	</participant>
+
+	<!-- 
+		Versicherter/Versicherung (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.7.3)
+	-->
+	<participant typeCode="HLD">
+		<templateId root="1.2.40.0.34.11.1.1.6"/>
+
+		<!-- Versicherungszeitraum vom 01.01.2002 – 31.12.2013 -->
+		<time>
+			<low value="20020101"/>
+			<high value="20131231"/>
+		</time>
+
+		<associatedEntity classCode="POLHOLD">
+		
+			<!-- Sozialversicherungsnummer des Patienten	-->
+			<id root="1.2.40.0.10.1.4.3.1" extension="123424121970" assigningAuthorityName="Österreichische Sozialversicherung"/>
+
+			<!-- Code SELF (Patient ist selbst der Versicherungsnehmer) -->
+			<code code="SELF" displayName="self" codeSystem="2.16.840.1.113883.5.111" codeSystemName="HL7:RoleCode"/>
+			
+			<!-- Versicherungsgesellschaft -->
+			<scopingOrganization>
+				<name>Sozialversicherung der gew. Wirtschaft</name>
+				<telecom value="tel:01.54654.0"/>
+				<telecom value="fax:01.54654.385"/>
+				<telecom value="http://esv-sva.sozvers.at"/>
+				<addr>
+					<streetName>Wiedner Hauptstraße</streetName>
+					<houseNumber>84-86</houseNumber>
+					<postalCode>1051</postalCode>
+					<city>Wien</city>
+					<state>Wien</state>
+					<country>AUT</country>
+				</addr>
+			</scopingOrganization>
+
+		</associatedEntity>
+	</participant>
+	
+	
+	<!-- 
+		Betreuende Organisation (siehe Allgemeiner Leitfaden, Kapitel 6.3.8.8.2)
+	-->
+	<participant typeCode="IND">
+		<templateId root="1.2.40.0.34.11.1.1.7"/>
+		<associatedEntity classCode="CAREGIVER">
+			<scopingOrganization>
+			
+				<!--
+					ID der Organisation aus dem GDA Index
+				-->
+				<id nullFlavor="UNK"/>
+
+				<!--
+					Name der betreuenden Organisation
+				-->
+				<name>Hauskrankenpflege Sorgenfrei</name>
+				
+				<!-- 
+					Kontaktdaten der Organisation
+				-->
+				<telecom value="tel:+43.2252.3453446.0"/>
+				<telecom value="fax:+43.2252.3453446.4674"/>
+				<telecom value="mailto:info@hauskrankenpflege-sorgenfrei.at"/>
+				<telecom value="http://www.hauskrankenpflege-sorgenfrei.at"/>
+
+				<!--
+					Adresse der Organisation
+				-->
+				<addr>
+					<streetName>Im schönen Walde</streetName>
+					<houseNumber>24</houseNumber>
+					<postalCode>2500</postalCode>
+					<city>Baden</city>
+					<state>Niederösterreich</state>
+					<country>AUT</country>
+				</addr>
+				
+			</scopingOrganization>		
+		</associatedEntity>
+	</participant>
+	
+		
+	
+	<!--
+			========================================================================
+			========================================================================
+			Zuweisung und Ordermanagement
+			siehe Allgemeiner Leitfaden, Kapitel 6.4
+			========================================================================
+			========================================================================
+	-->
+	<!-- inFulfillmentOf -->
+	<!-- Nicht anwendbar in diesem Demo-Dokument -->
+	
+	
+	<!--
+			========================================================================
+			========================================================================
+			Dokumentation der Gesundheitsdienstleistung
+			siehe Allgemeiner Leitfaden, Kapitel 6.5
+			========================================================================
+			========================================================================
+	-->
+	<documentationOf>
+		<serviceEvent>
+		
+			<!--
+				Code der Gesundheitsdienstleistung (siehe Allgemeiner Leitfaden, Kapitel 6.5.1.2.2)
+			-->
+			<code code="GDLSTATAUF" displayName="Gesundheitsdienstleistung im Rahmen eines stationären Aufenthalts" codeSystem="1.2.40.0.34.5.21" codeSystemName="ELGA_ServiceEventsEntlassbrief"/>
+
+			<!--
+				Zeitraum der Gesundheitsdienstleistung (siehe Allgemeiner Leitfaden, Kapitel 6.5.1.2.3)
+			-->
+			<effectiveTime>
+				<!-- Im Falle des Entlassungsbriefs: Zeitpunkt der Aufnahme des Patienten in den stationären Aufenthalt -->
+				<low value="20130302082015+0100"/>
+				<!-- Im Falle des Entlassungsbriefs: Zeitpunkt der administrativen Entlassung des Patienten aus dem stationären Aufenthalt -->
+				<high value="20130325113000+0100"/>
+			</effectiveTime>
+			
+		</serviceEvent>
+	</documentationOf>
+
+
+	<!--
+			========================================================================
+			========================================================================
+			Bezug zu vorgehenden Dokumenten
+			siehe Allgemeiner Leitfaden, Kapitel 6.6
+			========================================================================
+			========================================================================
+	-->
+	<!-- relatedDocument -->
+	<!-- Nicht angewandt in diesem Demo-Dokument -->
+
+
+	<!--
+			========================================================================
+			========================================================================
+			Einverständniserklärung
+			siehe Allgemeiner Leitfaden, Kapitel 6.7
+			========================================================================
+			========================================================================
+	-->
+	<!-- authorization -->
+	<!-- Wird in ELGA nicht verwendet -->	
+	
+	
+	<!--
+			========================================================================
+			========================================================================
+			Informationen zum Patientenkontakt
+			siehe Allgemeiner Leitfaden, Kapitel 6.8
+			========================================================================
+			========================================================================
+	-->
+	<componentOf>
+		<encompassingEncounter>
+		
+			<!--
+				Aufenthaltszahl (siehe Allgemeiner Leitfaden, Kapitel 6.8.1.2.2)
+			-->
+			<id root="1.2.40.0.34.99.4613.3.5" extension="Az123456" assigningAuthorityName="Amadeus Spital"/>
+			
+			<!--
+				Codierung des Patientenkontakts (siehe Allgemeiner Leitfaden, Kapitel 6.8.1.2.3)
+			-->
+			<code code="IMP" displayName="inpatient encounter" codeSystem="2.16.840.1.113883.5.4" codeSystemName="HL7:ActCode"/>
+			
+			<!--
+				Zeitraum des Patientenkontakts (siehe Allgemeiner Leitfaden, Kapitel 6.8.1.2.4)
+			-->
+			<effectiveTime>
+				<!-- Im Falle des Entlassungsbriefs: Zeitpunkt der Aufnahme des Patienten in den stationären Aufenthalt -->
+				<low value="20130302082015+0100"/>
+				<!-- Im Falle des Entlassungsbriefs: Zeitpunkt der administrativen Entlassung des Patienten aus dem stationären Aufenthalt -->
+				<high value="20130325113000+0100"/>
+			</effectiveTime>
+			
+			<!--
+				Verantwortliche Person für den Patientenkontakt (siehe Allgemeiner Leitfaden, Kapitel 6.8.1.2.5)
+			-->
+			<responsibleParty>
+				<assignedEntity>
+
+					<!--  
+						Identifikation der Verantwortlichen Person für den Patientenkontakt
+					-->
+					<id root="1.2.40.0.34.99.4613.3.3" extension="2222" assigningAuthorityName="Amadeus Spital"/>
+					
+					<!--
+						Kontaktdaten der Verantwortlichen Person für den Patientenkontakt
+					-->
+					<telecom use="WP" value="tel:+43.6138.3453446.2222"/>
+					
+					<!--
+						Personendaten der Verantwortlichen Person für den Patientenkontakt
+					-->
+					<assignedPerson>
+					
+						<!-- Name der Verantwortlichen Person für den Patientenkontakt -->
+						<name>
+							<prefix>Univ.-Prof.Dr.</prefix>
+							<given>Sigrid</given>
+							<family>Kollmann</family>
+						</name>
+						
+					</assignedPerson>
+					
+				</assignedEntity>
+			</responsibleParty>
+			
+			<!--
+				Organisation, in deren Verantwortungsbereich der Patientenkontakt stattfand (siehe Allgemeiner Leitfaden, Kapitel 6.8.1.2.6)
+			-->
+			<location>
+				<healthCareFacility>
+					<serviceProviderOrganization>
+					
+						<!--
+							ID der Organisation aus dem GDA Index
+						-->
+						<id root="1.2.40.0.34.99.4613.3" assigningAuthorityName="GDA Index"/>
+		
+						<!--
+							Name der Organisation
+						-->
+						<name>Amadeus Spital - Chirurgische Abteilung</name>
+						
+						<!-- 
+							Kontaktdaten der Organisation
+						-->
+						<telecom value="tel:+43.6138.3453446.0"/>
+						<telecom value="fax:+43.6138.3453446.4674"/>
+						<telecom value="mailto:info@amadeusspital.at"/>
+						<telecom value="http://www.amadeusspital.at"/>
+						
+						<!--
+							Adresse der Organisation
+						-->
+						<addr>
+							<streetName>Mozartgasse</streetName>
+							<houseNumber>1-7</houseNumber>
+							<postalCode>5350</postalCode>
+							<city>St.Wolfgang</city>
+							<state>Salzburg</state>
+							<country>AUT</country>
+						</addr>
+						
+					</serviceProviderOrganization>
+				</healthCareFacility>
+			</location>
+			
+		</encompassingEncounter>
+	</componentOf>
+
+
+
+	<!--
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+
+			Medizinische Inhalte "CDA Body"
+
+			siehe Allgemeiner Leitfaden, Kapitel 7
+
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+			************************************************************************************************************************************************
+	-->
+	<component>
+		<!--
+			ELGA Interoperabilitätsstufe (EIS) "Basic"
+
+			Eingebettetes PDF Dokument
+		-->
+		<nonXMLBody>
+			<text mediaType="application/pdf" representation="B64">
+			JVBERi0xLjQKJcOkw7zDtsOfCjIgMCBvYmoKPDwvTGVuZ3RoIDMgMCBSL0ZpbHRlci9GbGF0ZURl
+Y29kZT4+CnN0cmVhbQp4nO1ZS2vbQBC+61fsuRB735JACGRbKSnkEGroofQQkib0kJS4gf797ks7
+s5LWViG0JISA0+5jnt/Mt+PQFSO/i3V3eP5xd33zTDaX2+KJUELNuqrVipNKslVFDt+LLx/IY9Gb
+/fXn5+vH2+vDbdOsL7cXO0LbdrML98zP4b7Y7AulzbWSUvO5vyXrc0YYJ/u7rw1lrW4ob89YQwWV
+7reiuuUNLdsz81m5pZp29pxqz6rG727g3tYdHGS43Trc3tn/uJU+iPYq3Pp5e6b8LqPmum4YC8rQ
+IfTPLmqw9+q2GqRu3GdiL6N22y15qczbp0HmtlUNNlO0ilqjnMVRg0QaguOgrE+DwiCYwZUhasw4
+J9oq0e9FuFUvwoYgarIGhABEHRXOlW6/7T8V/b64mscBy+JAV+UYBaWJhTOZNkzGyPkkd8ifHUSn
+wwt8QIGNCFNuKwWVHiXTC8mhCCLvzykvGIe2B7EuDf6+z7gOwXf+iJaVo1RZkS6uIogZ4TFCMMm7
+hrRDmTCZ2O8SXo0x6y6wMsjXxqjKbEf0S3BXUI7clhCeOi6hEB5HAM8joBSmmYww4I2kvnK6oBS7
+Okkfq1sFR906th7QQzmOo1/Q48Yho59zSHGhQDkP5wPWoDuZKAdEsi7tIKjZjEu/d0jxu5ugxVU/
+qkbGoRi8UhmxyhIfAkChk6C+kMIL+RPtsBZ40xQG53D0eMpFPuWqXslxymtfVr5BUozYGoe9RtGj
+DBc3AFeFC7aTHCGNTO7nSMNKQ1ULiIAUp8bgVhkYLLEFIXmD7jkwgCGx8w/GRM9njRnSHEgM0n+a
+xY6nUuZTKdVKz6fyJajQ+mu4sDrFhbHEc1w45DpyoUvAQIa2Kb8kGw7gCz4mLBbVL6ExNdThMho7
+hiZ0x9ucsJheWtUqDwXBpk+6GToMnauygecqMhiUysA+eTrUizMvcSh8fLOM6EKouCfE2C+XEuJM
+d/8LGouE8L9o7HjWdT7rbJJz3/wiGzpvh/DaiHaTPhSpMOIkJRpMhegdFJpHB9pCnhjuwpECY4wT
+CnQdJY1FrPDAgVC+szSYTgA5BosejxjsH4w8wF4pcx3PeZnPOZXTJ9v78PZGh7cqiwNV0+k77n18
+e4PjW53HQKmnD8D38e31j28s/+Wd0nz60nu189uJMOS/u1JCTWiQoYemt6DGtIU63WhAxJW7BQz5
+Y900LCKI7zBcljAqojKveGePY7RtEpFidv6E6QY/kzuktBo73GPfo/bUbT6jaijmetrJUfbhbRVl
+IC1zz4LY2jXYZsXCEC0Tw04WTP47LsXZPFEG0ajhL3kZJTQY4eHz0EPIushzCdnAixvPwluwBr26
+ezTFBCGo4dVzEF88OglERwuHJzXQCMLvtL+XM1SSpO6KPBFRSVJKsRKESW0+S/uHjeGPGU9uUbo0
+mg1uT5ttf/7moVhfPHBGdj/JlZO17j9+5oLc/yLr/YFzv/EHGjd7RQplbmRzdHJlYW0KZW5kb2Jq
+CgozIDAgb2JqCjExMDkKZW5kb2JqCgoyMSAwIG9iago8PC9UeXBlL1hPYmplY3QvU3VidHlwZS9J
+bWFnZS9XaWR0aCAyNDQgL0hlaWdodCAxMTcgL0JpdHNQZXJDb21wb25lbnQgOCAvQ29sb3JTcGFj
+ZS9EZXZpY2VSR0IvRmlsdGVyL0RDVERlY29kZS9MZW5ndGggNzEzMT4+CnN0cmVhbQr/2P/gABBK
+RklGAAEBAAABAAEAAP/bAEMAAwICAwICAwMDAwQDAwQFCAUFBAQFCgcHBggMCgwMCwoLCw0OEhAN
+DhEOCwsQFhARExQVFRUMDxcYFhQYEhQVFP/bAEMBAwQEBQQFCQUFCRQNCw0UFBQUFBQUFBQUFBQU
+FBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFBQUFP/CABEIAHUA9AMBIgACEQEDEQH/
+xAAcAAEAAgIDAQAAAAAAAAAAAAAAAwcGCAEEBQL/xAAbAQEAAgMBAQAAAAAAAAAAAAAAAwQCBQYB
+B//aAAwDAQACEAMQAAAB2pBx8/dV5R+xFpjNu9JuTzp3LnDuBzrR4PuO2/OpsksG1/OqsmUW0/Or
+kmce43e142G0HT/Qp7AAAAAAABT1w09PX1R9Lv230PPVf4lhZBlF6tKXXheLFfXsb4mrVXznmZTV
+qpZhmZh+yWtuyWj6DkafoAAAAAAAFPXDT09evOa5tXb6fyvXrnyrFS5vv4xKGXBsszKC/rfQ6PTz
+WvYpG5cIsOzTxTZLW3ZLT7zkafoAAAAAAAFPXDT09fVH1/In6jls98Pw5cosg8uKWep7lw1Z36tr
+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
+jwhEgipLvAVy0iLBF0G3qUjjPvlADULdRJlgfjOgLoC2G3UUn1s2Ggp2MoINx51hfTOMKqg6DBbf
+t+BgaNsQHSC9uNA97oS4QpRWW0iS3LbAMGQhLEQaerQAQgQQWmACqN03DINoZSkL/lIYeOioPrHa
+2p2TcyUQBA+AgfYfbOUx064oozBGoZC8hh3zzXGlQrOKoqPaDzrXT7Ify9T/AIcBxjz6+NZ/6sQh
+AglpV2bgBtn0UaE1HbQ7FLiG5prhHwBMm83oRS9k1xr8mLqtDjeL1WzmoEAAsoym2+BADYQIRMB7
+XHvfktrEnAABjhtZKlKhEtiCIzmqG8SkDAgl2RRAXNCy1BCBgBSmCrjclVp8ADaOwpILf9F//9kK
+ZW5kc3RyZWFtCmVuZG9iagoKMjIgMCBvYmoKPDwvVHlwZS9YT2JqZWN0Ci9TdWJ0eXBlL0Zvcm0K
+L0JCb3hbIC04MyA0MjAgNjc4IDQyMC4xIF0KL0xlbmd0aCA4Ci9GaWx0ZXIvRmxhdGVEZWNvZGUK
+Pj4Kc3RyZWFtCnicAwAAAAABCmVuZHN0cmVhbQplbmRvYmoKCjIzIDAgb2JqCjw8L0NBIDEuMC9j
+YSAxLjAKPj4KZW5kb2JqCgoyNSAwIG9iago8PC9MZW5ndGggMjYgMCBSL0ZpbHRlci9GbGF0ZURl
+Y29kZS9MZW5ndGgxIDEzNTA4Pj4Kc3RyZWFtCnic3Xp7fFPXkfCZ+9DLkvWwZQnLoCtkm4eMbSxs
+MBAkHlZMTGKDMVgQsIQlYxHbUizxTBvMIwkxIdCUklCawLZ0C4QEGZzgJE1x0yTNgwQ2adrd0hY3
+Sbtt84Bmk7RfiOWde+61MCSl+9vv++u7QvfOmdeZMzNn7hzhROfaMNGSLsISb3N7MLbzzjVdhJCz
+hICpeV1CYGveKUR4gBBmR0tsdft3T9/+KSFcKyHK3tVtG1tsnxvuJkSbR4j1eGs4GGoNny4jJP8V
+1FHRioiO1FYlIQU4JPmt7YkNH2se7cBxPo6/0RZtDv5uxeFFOD6EY297cENsNVvB4BjnI0JHsD38
+fV3d54SgCSRjZSwaT+wjE4cImRwQ6bHOcOyB+af6cIw2s3MRB/gRLy2CCnHMsByvUKrUmgytLlNv
+MJqyss05FuuoXFve6DHk//+LP8ufJd/ktxAz2Ujv11zcdJJN1hMy9KE4unpPLf1/a4VKevSS58kJ
+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
+sn8Ef2r4sPqDhr+UkYY//+lPDf9ZTRr+SIbsv73pYsNFYBt+dxPb8Bt2yK5/x/4OQ2/e16w237kX
+4Pn+mfaf1hXaf/yT8fahZ6CuL9bX1cf2DfV7h/pMZT77ac/p2tPR05tPHzx94rTS+jTETh46mTzJ
+6k/Cnqcg+RTonwKV/pTn1KVTbFdyT5JJJvuT55NsyQnPCebQE8knmP4nzj/BlBz3HGcOPg79x84f
+Y2qP7j7KlByNHj1zdOgo970D+fa6AxDdB2f2wT7faPt39lrs+r32vZv37t47tJcv/Zb3W0zXtyC2
+u2s3s2c39O8+v5upfaDpgegD7L2+IfvBe2D7tsn2RNxjj+NCoh0z7R2+cnsuWBtGua0NSjfboMCl
+B5DWhN/bfZPty5dV25fhM6vM1MCje7gytqGNBS07k13AtrHfYPlLC4e8oYWMd2H5NJ93YcF437k6
+mO8T7NWo+Wb8nvDBRd8lH9Plg5wyc4MR9A2GMn0DAxh/Ana73qNv0m/Wc3p9ib5WH9Xv1l/UD+mV
+HsRd0rNRArUEunKAhz7Y07O43uWq6VMOLapJKuuWJ2FHsqBevHsXLksqdiRJw7LljT0AD/rv2bWL
+zBldkyyrb0wGRvtrkiEEvCLQhYBhdE8OmeOPJ+KJtS7xAgkgCZcrHhchEEcuiUYhcMWRjGwohIPE
+WhJ3xRMQj+NuSSA+DisRjmOtQXwcUAS/cZesP60JJ1iJivCWkKaIx1Eujnri8nTWleS/AZjtUcAK
+ZW5kc3RyZWFtCmVuZG9iagoKMjYgMCBvYmoKODIzNgplbmRvYmoKCjI3IDAgb2JqCjw8L1R5cGUv
+Rm9udERlc2NyaXB0b3IvRm9udE5hbWUvQkFBQUFBK0xpYmVyYXRpb25TYW5zCi9GbGFncyA0Ci9G
+b250QkJveFstNTQzIC0zMDMgMTMwMSA5ODBdL0l0YWxpY0FuZ2xlIDAKL0FzY2VudCA5MDUKL0Rl
+c2NlbnQgLTIxMQovQ2FwSGVpZ2h0IDk3OQovU3RlbVYgODAKL0ZvbnRGaWxlMiAyNSAwIFIKPj4K
+ZW5kb2JqCgoyOCAwIG9iago8PC9MZW5ndGggMzU1L0ZpbHRlci9GbGF0ZURlY29kZT4+CnN0cmVh
+bQp4nF2SzW6DMAyA7zxFjt2hglAKq4SQWlokDvvR2B6AJqZDGiEK9MDbL7bZJu0A+uLYzgdOWNbn
+2vRz+OpG1cAsut5oB9N4dwrEFW69CWQsdK/mdUVvNbQ2CH1ts0wzDLXpxjwPwje/N81uEZujHq/w
+EIQvToPrzU1sPsrGr5u7tV8wgJlFFBSF0ND5Pk+tfW4HCKlqW2u/3c/L1pf8JbwvFkRMa8kqatQw
+2VaBa80NgjyKCpFXVRGA0f/2dhGXXDv12TqfKn1qFCVl4TkmTivkHXEWIycc3yPvmc/IKXEcIWcc
+PyA/ci3FD8w75CMz9TlxfoJcMpPDmXMofuG4RK74LMyREcexp2T/9IK8+mfIqz/6SPbPUuTVH79L
+sn+G/SX7x9SH/ROKs396RGb/PZ27+p+Q2T9BZ8n+6SPy6p/SINY/jiPBO/MzaqHuzvkx08Wi+eJk
+ewO/d8+OFqvo+QZParGTCmVuZHN0cmVhbQplbmRvYmoKCjI5IDAgb2JqCjw8L1R5cGUvRm9udC9T
+dWJ0eXBlL1RydWVUeXBlL0Jhc2VGb250L0JBQUFBQStMaWJlcmF0aW9uU2FucwovRmlyc3RDaGFy
+IDAKL0xhc3RDaGFyIDMwCi9XaWR0aHNbNzUwIDU1NiA1NTYgMzMzIDU1NiA4MzMgMjc3IDIyMiA1
+NTYgNTAwIDU1NiA1NTYgMjIyIDI3NyA1NTYgMjc3CjUwMCA1NTYgNTU2IDUwMCA1MDAgNTU2IDU1
+NiAyNzcgNjY2IDIyMiA2NjYgNTAwIDcyMiA1NTYgMjc3IF0KL0ZvbnREZXNjcmlwdG9yIDI3IDAg
+UgovVG9Vbmljb2RlIDI4IDAgUgo+PgplbmRvYmoKCjMwIDAgb2JqCjw8L0YxIDI5IDAgUgo+Pgpl
+bmRvYmoKCjMxIDAgb2JqCjw8L0ZvbnQgMzAgMCBSCi9YT2JqZWN0PDwvSW0yMSAyMSAwIFIvVHIy
+MiAyMiAwIFI+PgovRXh0R1N0YXRlPDwvRUdTMjMgMjMgMCBSPj4KL1Byb2NTZXRbL1BERi9UZXh0
+L0ltYWdlQy9JbWFnZUkvSW1hZ2VCXQo+PgplbmRvYmoKCjEgMCBvYmoKPDwvVHlwZS9QYWdlL1Bh
+cmVudCAyNCAwIFIvUmVzb3VyY2VzIDMxIDAgUi9NZWRpYUJveFswIDAgNTk1IDg0Ml0vU3RydWN0
+UGFyZW50cyAwCi9Db250ZW50cyAyIDAgUj4+CmVuZG9iagoKMzIgMCBvYmoKPDwvTiAzL0xlbmd0
+aCAzMyAwIFIvRmlsdGVyL0ZsYXRlRGVjb2RlPj4Kc3RyZWFtCnicpZCxSwJhGMYfFTPqwqKGhgYH
+aQhdbGkMg4QwBzXIark7PQ3u9Lg7iWhsaHVwqWjJov+gtugfCIKgWmqpuaEggpDr+TxBCJ16j+/e
+H8/3Pt999wD+hq4atn8cMKqOlU0lI+uFjUjoGRKCGEIUE7Jqm6u55TwG1tcDfKLfx8VZg+f61mix
+ZKuAb5i8oJqWQ14kZ3YcU3CDPKVW5CL5jByzeEHyndAVj98Elz3+Fmzls0uAXyJHyh7HBCsepwWr
+Fcsg6+SoodfV7n3En0il6lqOfaazbGSRQhIRKKhjGzocxNmrzKy/L9HxZVCjR+XbxC4sOsqo0Buj
+WuepJXaNeomPzgmWyP5vprY2n/C+IK0AwVfX/ZwDQsdA+8B1f05dt90CAk/ATbPnrzUZ5zv1Rk+L
+ngDhfeDyuqcp58AVM55+MWVL7kgBLr+mAR8XwFgBmGTWI5v/3ffy7u6j9Qjk94D0LXB4BMxyPrz1
+C6lHdIYKZW5kc3RyZWFtCmVuZG9iagoKMzMgMCBvYmoKMzY3CmVuZG9iagoKMzQgMCBvYmoKPDwv
+VHlwZS9PdXRwdXRJbnRlbnQvUy9HVFNfUERGQTEvT3V0cHV0Q29uZGl0aW9uSWRlbnRpZmllcihz
+UkdCIElFQzYxOTY2LTIuMSkvRGVzdE91dHB1dFByb2ZpbGUgMzIgMCBSPj4KZW5kb2JqCgozNSAw
+IG9iago8PC9UeXBlL01ldGFkYXRhL1N1YnR5cGUvWE1ML0xlbmd0aCAyODYzPj4Kc3RyZWFtCjw/
+eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+Cjx4Onht
+cG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iPgogPHJkZjpSREYgeG1sbnM6cmRmPSJodHRw
+Oi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICA8cmRmOkRlc2NyaXB0
+aW9uIHJkZjphYm91dD0iIgogICAgICB4bWxuczpwZGZhaWQ9Imh0dHA6Ly93d3cuYWlpbS5vcmcv
+cGRmYS9ucy9pZC8iPgogICA8cGRmYWlkOnBhcnQ+MTwvcGRmYWlkOnBhcnQ+CiAgIDxwZGZhaWQ6
+Y29uZm9ybWFuY2U+QTwvcGRmYWlkOmNvbmZvcm1hbmNlPgogIDwvcmRmOkRlc2NyaXB0aW9uPgog
+IDxyZGY6RGVzY3JpcHRpb24gcmRmOmFib3V0PSIiCiAgICAgeG1sbnM6cGRmPSJodHRwOi8vbnMu
+YWRvYmUuY29tL3BkZi8xLjMvIj4KICAgPHBkZjpQcm9kdWNlcj5MaWJyZU9mZmljZSA0LjE8L3Bk
+ZjpQcm9kdWNlcj4KICA8L3JkZjpEZXNjcmlwdGlvbj4KICA8cmRmOkRlc2NyaXB0aW9uIHJkZjph
+Ym91dD0iIgogICAgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIj4KICAg
+PHhtcDpDcmVhdG9yVG9vbD5Xcml0ZXI8L3htcDpDcmVhdG9yVG9vbD4KICAgPHhtcDpDcmVhdGVE
+YXRlPjIwMTMtMTItMDVUMDc6MzY6MTYrMDE6MDA8L3htcDpDcmVhdGVEYXRlPgogIDwvcmRmOkRl
+c2NyaXB0aW9uPgogPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+IAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAog
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgCiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgIAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAKPD94cGFja2V0
+IGVuZD0idyI/PgoKZW5kc3RyZWFtCmVuZG9iagoKMzcgMCBvYmoKPDwvTy9MYXlvdXQKL1BsYWNl
+bWVudC9CbG9jawo+PgplbmRvYmoKCjUgMCBvYmoKPDwvVHlwZS9TdHJ1Y3RFbGVtCi9TL1N0YW5k
+YXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSAzNyAwIFIKPj4KZW5kb2JqCgozOCAwIG9iago8PC9P
+L0xheW91dAovUGxhY2VtZW50L0Jsb2NrCj4+CmVuZG9iagoKNiAwIG9iago8PC9UeXBlL1N0cnVj
+dEVsZW0KL1MvU3RhbmRhcmQKL1AgNCAwIFIKL1BnIDEgMCBSCi9BIDM4IDAgUgo+PgplbmRvYmoK
+CjM5IDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQvQmxvY2sKPj4KZW5kb2JqCgo3IDAgb2Jq
+Cjw8L1R5cGUvU3RydWN0RWxlbQovUy9TdGFuZGFyZAovUCA0IDAgUgovUGcgMSAwIFIKL0EgMzkg
+MCBSCi9LWzAgXQo+PgplbmRvYmoKCjQwIDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQvQmxv
+Y2sKPj4KZW5kb2JqCgo4IDAgb2JqCjw8L1R5cGUvU3RydWN0RWxlbQovUy9TdGFuZGFyZAovUCA0
+IDAgUgovUGcgMSAwIFIKL0EgNDAgMCBSCi9LWzEgXQo+PgplbmRvYmoKCjQxIDAgb2JqCjw8L08v
+TGF5b3V0Ci9QbGFjZW1lbnQvQmxvY2sKPj4KZW5kb2JqCgo5IDAgb2JqCjw8L1R5cGUvU3RydWN0
+RWxlbQovUy9TdGFuZGFyZAovUCA0IDAgUgovUGcgMSAwIFIKL0EgNDEgMCBSCi9LWzIgXQo+Pgpl
+bmRvYmoKCjQyIDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQvQmxvY2sKPj4KZW5kb2JqCgox
+MCAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0KL1MvU3RhbmRhcmQKL1AgNCAwIFIKL1BnIDEgMCBS
+Ci9BIDQyIDAgUgovS1szIF0KPj4KZW5kb2JqCgo0MyAwIG9iago8PC9PL0xheW91dAovUGxhY2Vt
+ZW50L0Jsb2NrCj4+CmVuZG9iagoKMTEgMCBvYmoKPDwvVHlwZS9TdHJ1Y3RFbGVtCi9TL1N0YW5k
+YXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSA0MyAwIFIKL0tbNCBdCj4+CmVuZG9iagoKNDQgMCBv
+YmoKPDwvTy9MYXlvdXQKL1BsYWNlbWVudC9CbG9jawo+PgplbmRvYmoKCjEyIDAgb2JqCjw8L1R5
+cGUvU3RydWN0RWxlbQovUy9TdGFuZGFyZAovUCA0IDAgUgovUGcgMSAwIFIKL0EgNDQgMCBSCi9L
+WzUgXQo+PgplbmRvYmoKCjQ1IDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQvQmxvY2sKPj4K
+ZW5kb2JqCgoxMyAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0KL1MvU3RhbmRhcmQKL1AgNCAwIFIK
+L1BnIDEgMCBSCi9BIDQ1IDAgUgovS1s2IF0KPj4KZW5kb2JqCgo0NiAwIG9iago8PC9PL0xheW91
+dAovUGxhY2VtZW50L0Jsb2NrCj4+CmVuZG9iagoKMTQgMCBvYmoKPDwvVHlwZS9TdHJ1Y3RFbGVt
+Ci9TL1N0YW5kYXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSA0NiAwIFIKL0tbNyBdCj4+CmVuZG9i
+agoKNDcgMCBvYmoKPDwvTy9MYXlvdXQKL1BsYWNlbWVudC9CbG9jawo+PgplbmRvYmoKCjE1IDAg
+b2JqCjw8L1R5cGUvU3RydWN0RWxlbQovUy9TdGFuZGFyZAovUCA0IDAgUgovUGcgMSAwIFIKL0Eg
+NDcgMCBSCi9LWzggXQo+PgplbmRvYmoKCjQ4IDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQv
+QmxvY2sKPj4KZW5kb2JqCgoxNiAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0KL1MvU3RhbmRhcmQK
+L1AgNCAwIFIKL1BnIDEgMCBSCi9BIDQ4IDAgUgovS1s5IF0KPj4KZW5kb2JqCgo0OSAwIG9iago8
+PC9PL0xheW91dAovUGxhY2VtZW50L0Jsb2NrCj4+CmVuZG9iagoKMTcgMCBvYmoKPDwvVHlwZS9T
+dHJ1Y3RFbGVtCi9TL1N0YW5kYXJkCi9QIDQgMCBSCi9QZyAxIDAgUgovQSA0OSAwIFIKL0tbMTAg
+XQo+PgplbmRvYmoKCjUwIDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1lbnQvQmxvY2sKPj4KZW5k
+b2JqCgoxOCAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0KL1MvU3RhbmRhcmQKL1AgNCAwIFIKL1Bn
+IDEgMCBSCi9BIDUwIDAgUgo+PgplbmRvYmoKCjUxIDAgb2JqCjw8L08vTGF5b3V0Ci9QbGFjZW1l
+bnQvQmxvY2sKPj4KZW5kb2JqCgoxOSAwIG9iago8PC9UeXBlL1N0cnVjdEVsZW0KL1MvU3RhbmRh
+cmQKL1AgNCAwIFIKL1BnIDEgMCBSCi9BIDUxIDAgUgovS1sxMSBdCj4+CmVuZG9iagoKNTIgMCBv
+YmoKPDwvTy9MYXlvdXQKL1BsYWNlbWVudC9CbG9jawo+PgplbmRvYmoKCjIwIDAgb2JqCjw8L1R5
+cGUvU3RydWN0RWxlbQovUy9TdGFuZGFyZAovUCA0IDAgUgovUGcgMSAwIFIKL0EgNTIgMCBSCi9L
+WzEyIF0KPj4KZW5kb2JqCgo0IDAgb2JqCjw8L1R5cGUvU3RydWN0RWxlbQovUy9Eb2N1bWVudAov
+UCAzNiAwIFIKL1BnIDEgMCBSCi9LWzUgMCBSIDYgMCBSIDcgMCBSIDggMCBSIDkgMCBSIDEwIDAg
+UiAxMSAwIFIgMTIgMCBSIDEzIDAgUiAxNCAwIFIgMTUgMCBSIDE2IDAgUiAxNyAwIFIgMTggMCBS
+IDE5IDAgUiAyMCAwIFIKXQo+PgplbmRvYmoKCjM2IDAgb2JqCjw8L1R5cGUvU3RydWN0VHJlZVJv
+b3QKL1BhcmVudFRyZWUgNTMgMCBSCi9Sb2xlTWFwPDwvU3RhbmRhcmQvUAovRG9jdW1lbnQvRG9j
+dW1lbnQKPj4KL0tbNCAwIFIgXQo+PgplbmRvYmoKCjUzIDAgb2JqCjw8L051bXNbCjAgWyA3IDAg
+UiA4IDAgUiA5IDAgUiAxMCAwIFIgMTEgMCBSIDEyIDAgUiAxMyAwIFIgMTQgMCBSIDE1IDAgUiAx
+NiAwIFIKMTcgMCBSIDE5IDAgUiAyMCAwIFIgXQpdPj4KZW5kb2JqCgoyNCAwIG9iago8PC9UeXBl
+L1BhZ2VzCi9SZXNvdXJjZXMgMzEgMCBSCi9NZWRpYUJveFsgMCAwIDU5NSA4NDIgXQovS2lkc1sg
+MSAwIFIgXQovQ291bnQgMT4+CmVuZG9iagoKNTQgMCBvYmoKPDwvVHlwZS9DYXRhbG9nL1BhZ2Vz
+IDI0IDAgUgovT3BlbkFjdGlvblsxIDAgUiAvWFlaIG51bGwgbnVsbCAwXQovU3RydWN0VHJlZVJv
+b3QgMzYgMCBSCi9MYW5nKGRlLURFKQovTWFya0luZm88PC9NYXJrZWQgdHJ1ZT4+Ci9PdXRwdXRJ
+bnRlbnRzWzM0IDAgUl0vTWV0YWRhdGEgMzUgMCBSPj4KZW5kb2JqCgo1NSAwIG9iago8PC9DcmVh
+dG9yPEZFRkYwMDU3MDA3MjAwNjkwMDc0MDA2NTAwNzI+Ci9Qcm9kdWNlcjxGRUZGMDA0QzAwNjkw
+MDYyMDA3MjAwNjUwMDRGMDA2NjAwNjYwMDY5MDA2MzAwNjUwMDIwMDAzNDAwMkUwMDMxPgovQ3Jl
+YXRpb25EYXRlKEQ6MjAxMzEyMDUwNzM2MTYrMDEnMDAnKT4+CmVuZG9iagoKeHJlZgowIDU2CjAw
+MDAwMDAwMDAgNjU1MzUgZiAKMDAwMDAxODEwMyAwMDAwMCBuIAowMDAwMDAwMDE5IDAwMDAwIG4g
+CjAwMDAwMDExOTkgMDAwMDAgbiAKMDAwMDAyMzkwMCAwMDAwMCBuIAowMDAwMDIxNzk2IDAwMDAw
+IG4gCjAwMDAwMjE5MjQgMDAwMDAgbiAKMDAwMDAyMjA1MiAwMDAwMCBuIAowMDAwMDIyMTg3IDAw
+MDAwIG4gCjAwMDAwMjIzMjIgMDAwMDAgbiAKMDAwMDAyMjQ1NyAwMDAwMCBuIAowMDAwMDIyNTkz
+IDAwMDAwIG4gCjAwMDAwMjI3MjkgMDAwMDAgbiAKMDAwMDAyMjg2NSAwMDAwMCBuIAowMDAwMDIz
+MDAxIDAwMDAwIG4gCjAwMDAwMjMxMzcgMDAwMDAgbiAKMDAwMDAyMzI3MyAwMDAwMCBuIAowMDAw
+MDIzNDA5IDAwMDAwIG4gCjAwMDAwMjM1NDYgMDAwMDAgbiAKMDAwMDAyMzY3NSAwMDAwMCBuIAow
+MDAwMDIzODEyIDAwMDAwIG4gCjAwMDAwMDEyMjAgMDAwMDAgbiAKMDAwMDAwODUxMSAwMDAwMCBu
+IAowMDAwMDA4NjQ0IDAwMDAwIG4gCjAwMDAwMjQzMjMgMDAwMDAgbiAKMDAwMDAwODY4MSAwMDAw
+MCBuIAowMDAwMDE3MDA0IDAwMDAwIG4gCjAwMDAwMTcwMjYgMDAwMDAgbiAKMDAwMDAxNzIyMiAw
+MDAwMCBuIAowMDAwMDE3NjQ3IDAwMDAwIG4gCjAwMDAwMTc5MjkgMDAwMDAgbiAKMDAwMDAxNzk2
+MiAwMDAwMCBuIAowMDAwMDE4MjE5IDAwMDAwIG4gCjAwMDAwMTg2NjMgMDAwMDAgbiAKMDAwMDAx
+ODY4NCAwMDAwMCBuIAowMDAwMDE4ODA2IDAwMDAwIG4gCjAwMDAwMjQwODIgMDAwMDAgbiAKMDAw
+MDAyMTc0NyAwMDAwMCBuIAowMDAwMDIxODc1IDAwMDAwIG4gCjAwMDAwMjIwMDMgMDAwMDAgbiAK
+MDAwMDAyMjEzOCAwMDAwMCBuIAowMDAwMDIyMjczIDAwMDAwIG4gCjAwMDAwMjI0MDggMDAwMDAg
+biAKMDAwMDAyMjU0NCAwMDAwMCBuIAowMDAwMDIyNjgwIDAwMDAwIG4gCjAwMDAwMjI4MTYgMDAw
+MDAgbiAKMDAwMDAyMjk1MiAwMDAwMCBuIAowMDAwMDIzMDg4IDAwMDAwIG4gCjAwMDAwMjMyMjQg
+MDAwMDAgbiAKMDAwMDAyMzM2MCAwMDAwMCBuIAowMDAwMDIzNDk3IDAwMDAwIG4gCjAwMDAwMjM2
+MjYgMDAwMDAgbiAKMDAwMDAyMzc2MyAwMDAwMCBuIAowMDAwMDI0MTk5IDAwMDAwIG4gCjAwMDAw
+MjQ0MjMgMDAwMDAgbiAKMDAwMDAyNDYwOCAwMDAwMCBuIAp0cmFpbGVyCjw8L1NpemUgNTYvUm9v
+dCA1NCAwIFIKL0luZm8gNTUgMCBSCi9JRCBbIDwxNjMzN0RBMzgzRUUyRTQwRjU5RjQxRkJCODI2
+MEY4Mj4KPDE2MzM3REEzODNFRTJFNDBGNTlGNDFGQkI4MjYwRjgyPiBdCi9Eb2NDaGVja3N1bSAv
+RDhGRDBBNEQ4MzU1M0RBNkE4QTk5NTZFQ0IxMUYzNDMKPj4Kc3RhcnR4cmVmCjI0NzgzCiUlRU9G
+Cg==</text>
+		</nonXMLBody>
+	</component>
+</ClinicalDocument>
