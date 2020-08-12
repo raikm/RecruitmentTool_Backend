@@ -20,12 +20,11 @@ def evaluate_request(id):
 
     for patient in patient_list:
         patient_result = get_patient(patient)
-        criterium_results = evaluate_criterions(critierum_list, patient)
         patient_result["criterium_results"] = evaluate_criterions(critierum_list, patient)
         patient_result["information_needed_results"] = evaluate_information_need(information_need_list, patient)
         patients_dic["patients"].append(patient_result)
 
-    return patients_dic
+    return json.dumps(patients_dic)
 
 
 
@@ -50,6 +49,7 @@ def evaluate_criterions(critierum_list, patient):
             condition_result["name"] = condition.name
 
             evaluation_result = []
+            evaluation_results = []
             values_result = []
             evaluation_related_cda = None
 
@@ -66,18 +66,21 @@ def evaluate_criterions(critierum_list, patient):
                     continue
                 if evaluation_result is ERROR:
                     continue
+                if len(evaluation_result) == 0:
+                    continue
                 #TODO: resturn ALL founds results with linked cda's
-                elif len(evaluation_result) > 1:
-                    evaluation_results = evaluation_result
+                if len(evaluation_result) > 0:
+                    evaluation_results.append(evaluation_result)
                     evaluation_related_cda = file.cda_id
-                    break
+                    continue
 
-            condition_result["evaluation_result"] = evaluation_result
+            condition_result["evaluation_result"] = evaluation_results
             condition_result["evaluation_related_cda"] = evaluation_related_cda
             condition_result["values_result"] = values_result
             criterium_result["conditions"].append(condition_result)
 
-
+        #TODO: change if negative xPaths are implemented
+        criterium_result["criterium_summary_result"] = 0 if len(condition_result["evaluation_result"]) > 0 else 1
         criterium_results.append(criterium_result)
 
     return criterium_results

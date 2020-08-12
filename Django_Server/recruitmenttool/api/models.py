@@ -40,7 +40,7 @@ class Patient(models.Model):
 class CDAFile(models.Model):
     name = models.CharField(max_length=400)
     cda_id = models.FloatField()
-    file = models.FileField(upload_to='cda_files')
+    file = models.FileField(upload_to='Django_Server/recruitmenttool/cda_files')
     file_date = models.DateTimeField()
     upload_date = models.DateTimeField(auto_now=True)
     patient = models.ForeignKey(

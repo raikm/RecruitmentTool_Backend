@@ -3,8 +3,8 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
-from cdamanager.Evaluations import evaluate_request
-from cdamanager.XMLEvaluator import XMLEvaluator
+from Django_Server.recruitmenttool.cdamanager.Evaluations import evaluate_request
+from Django_Server.recruitmenttool.cdamanager.XMLEvaluator import XMLEvaluator
 from .database_handler import Database_Handler
 from django.utils import timezone
 import datetime
@@ -16,7 +16,7 @@ now = datetime.datetime.now(tz=timezone.utc)
 
 @csrf_exempt
 @api_view(('POST',))
-#TODO: RENAME create new study
+#TODO: RENAME create_and_validate_new_study
 def create_new_criteria(request):
     if request.method == 'POST':
         r = request.data
@@ -33,13 +33,37 @@ def create_new_criteria(request):
             for file in dataList:
                 if XMLEvaluator.evaluate_file_type(str(file)):
                     dbhandler.write_patient_and_CDAData_in_db(file)
+        try:
+            result = evaluate_request(study.id)
+            return Response(json.loads(result), status=status.HTTP_201_CREATED)
+        except Exception:
+            return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
+                            status=status.HTTP_400_BAD_REQUEST)
+        return Response("CREATED", status=status.HTTP_201_CREATED)
+
+
+@csrf_exempt
+@api_view(('POST',))
+def validate_saved_criteria(request):
+    if request.method == 'POST':
+        # r = request.data
+        dbhandler = Database_Handler(r)
+        #TODO: later Ethicsnumber for identification
+        #study_name = r.get('Study_Name')
+        study_name = "NVC Glaukom Studie"
+        study = model.Study.objects.all().filter(name = study_name)[0]
+        # dataList = request.FILES.getlist('file')
+        # if dataList:
+        #     for file in dataList:
+        #         if XMLEvaluator.evaluate_file_type(str(file)):
+        #             dbhandler.write_patient_and_CDAData_in_db(file)
         # try:
-        #     result = evaluate_request(study.id)
-        #     return Response(json.loads(result), status=status.HTTP_201_CREATED)
-        # except Exception:
+        result = evaluate_request(study.id)
+        return Response(json.dumps(result), status=status.HTTP_201_CREATED)
+        # except TODO:
         #     return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
         #                     status=status.HTTP_400_BAD_REQUEST)
-        return Response("CREATED", status=status.HTTP_201_CREATED)
+        # return Response("CREATED", status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt

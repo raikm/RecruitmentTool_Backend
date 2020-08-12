@@ -94,5 +94,6 @@ class Database_Handler:
                                      upload_date=now,
                                      patient=patient)
         else:
+
             print("----------CDA File exist already - no db-save----------")
         del extractor

@@ -3406,7 +3406,7 @@
                                         </pharm:asContent>
                                         <pharm:ingredient classCode="ACTI">
                                             <pharm:ingredient classCode="MMAT" determinerCode="KIND">
-                                                <pharm:code code="N05BA01" displayName="Diazepam"
+                                                <pharm:code code="N05BA02" displayName="Diazepam"
                                                   codeSystem="2.16.840.1.113883.6.73"
                                                   codeSystemName="ATC WHO"/>
                                                 <pharm:name>Diazepam</pharm:name>

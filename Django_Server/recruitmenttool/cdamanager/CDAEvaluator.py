@@ -63,8 +63,10 @@ class CDAEvaluator:
             root = self.get_root_from_xml(self, cda_file)
             results = elementpath.select(root, xPath, namespaces)
         except elementpath.exceptions.ElementPathSyntaxError:
+            print("Syntax Error")
             return self.ERROR
-        except:
+        except FileNotFoundError:
+            print("File not Found!")
             return self.ERROR
 
         if results is not None and len(results) != 0:
