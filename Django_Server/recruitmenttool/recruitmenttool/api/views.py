@@ -86,6 +86,13 @@ def all_studies(request):
 
 @csrf_exempt
 @api_view(('GET',))
+def get_cda_file(request, cda_id):
+    result = model.CDAFile.objects.all().filter(cda_id=cda_id).first()
+    return Response(result, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(('GET',))
 def get_study(request, study_id):
     study = model.Study.objects.all().filter(id=study_id).first()
     study_serialized = serializer.StudySerializer(study).data

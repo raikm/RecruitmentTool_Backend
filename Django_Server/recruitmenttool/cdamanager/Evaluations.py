@@ -44,6 +44,7 @@ def evaluate_criterions(critierum_list, patient):
         criterium_result["conditions"] = []
 
         conditions = model.Condition.objects.all().filter(criterium_id=criterium.id)
+        hit_watch = False
         for condition in conditions:
             condition_result = {}
             condition_result["name"] = condition.name
@@ -57,6 +58,8 @@ def evaluate_criterions(critierum_list, patient):
 
             # TODO: order patient_cda_files by date
             evaluation_result = []
+            hit = {}
+
             for file in patient_cda_files:
                 evaluation_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.xPath, file.file)
                 values_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.value_xPath, file.file)
@@ -66,6 +69,7 @@ def evaluate_criterions(critierum_list, patient):
                     hit = {"hit_result": evaluation_result, "cda_id": file.cda_id}
                     evaluation_results["hits"].append(hit)
                     evaluation_results["evaluation_result_summary"] = "hit"
+                    hit_watch = True
                 if len(values_result) > 0:
                     value_result = {"value_result": values_result, "cda_id": file.cda_id}
                     value_results["values"].append(value_result)
@@ -77,9 +81,10 @@ def evaluate_criterions(critierum_list, patient):
 
             condition_result["evaluation_results"] = evaluation_results
             criterium_result["conditions"].append(condition_result)
+            criterium_result["criterium_summary_result"] = "hit" if hit_watch else "no_hit"
 
         # TODO: change if negative xPaths are implemented
-        criterium_result["criterium_summary_result"] = "hit" if len(condition_result["evaluation_results"]) > 0 else "no_hit"
+
         criterium_results.append(criterium_result)
 
     return criterium_results
