@@ -88,7 +88,7 @@ def evaluate_information_need(information_need_list, patient):
     for information in information_need_list:
         information_result = {}
         information_result["name"] = information.name
-        patient_cda_files = model.CDAFile.objects.all().filter(patient_id =  patient.id)
+        patient_cda_files = model.CDAFile.objects.all().filter(patient_id = patient.id)
 
         evaluation_related_cda = None
         values_result = []

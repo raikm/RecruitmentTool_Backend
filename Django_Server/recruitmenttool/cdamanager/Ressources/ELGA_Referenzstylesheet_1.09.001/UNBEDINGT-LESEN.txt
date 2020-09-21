@@ -1,0 +1,10 @@
+ACHTUNG, das ELGA-Referenz-Stylesheet enthält ab Version 1.06.004.1 geänderte Funktionen zur Darstellung von fehlerhaft formatierten Tabellen:
+
+Mit den Default-Einstellungen werden Dokumente mit fehlerhaften Tabellen nicht angezeigt.
+-Mit der Option "strict mode disabled" werden die Dokumente angezeigt, für die Tabellen werden Platzhalter mit entsprechendem Hinweistext eingefügt.
+-Mit der Option "showTableInBestGuess enabled" werden auch ungültige Tabellen, etwa mit unterschiedlicher Spaltenanzahl innerhalb einer Tabelle, im "best guess" Modus angezeigt.
+ Der Inhalt kann dadurch unter Umständen fehlerhaft interpretiert werden. 
+ Diese Tabellen werden durch das Stylesheet mit einem Warnhinweis versehen angezeigt.
+
+Für das Setzen der beiden Optionen beachten Sie bitte die Hinweise im readme.
+Das Umstellen dieser beiden Optionen ist aus haftungsrechtlichen Gründen dringend mit dem Verantwortlichen/Ihrem Vorgesetzten abzustimmen. Bei Fragen wenden Sie sich an cda@elga.gv.at.

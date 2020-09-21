@@ -32,7 +32,7 @@ urlpatterns = [
 
 
 def startup():
-    print("----------START-DJANGO-SERVER--v1--------\n")
+    print("----------START-DJANGO-SERVER--v2--------/n")
 
 
 startup()

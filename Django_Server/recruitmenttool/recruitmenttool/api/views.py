@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
@@ -8,9 +9,14 @@ from Django_Server.recruitmenttool.cdamanager.XMLEvaluator import XMLEvaluator
 from .database_handler import Database_Handler
 from django.utils import timezone
 import datetime
-import api.models as model
-import api.serializers as serializer
+#import api.models as model
+import Django_Server.recruitmenttool.api.models as model
+#import api.serializers as serializer
+import Django_Server.recruitmenttool.api.serializers as serializers
 import json
+import Django_Server.recruitmenttool.cdamanager.CDATransformer import CDATransformer
+
+
 now = datetime.datetime.now(tz=timezone.utc)
 
 
@@ -118,3 +124,13 @@ def get_study(request, study_id):
     # result.append(data_set)
     result.append(study_serialized)
     return Response(result, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(('GET',))
+def get_visualized_cda(request, cda_id):
+    cda_file = model.CDAFile.objects.all().filter(cda_id=cda_id).first()
+    # check if method can work with "cda_file"?
+    stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
+    html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file, stylesheet_path)
+    return HttpResponse(html)
