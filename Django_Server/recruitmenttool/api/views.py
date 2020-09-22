@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+import glob
+
+from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from rest_framework import status
@@ -10,7 +13,9 @@ from django.utils import timezone
 import datetime
 import api.models as model
 import api.serializers as serializer
+from Django_Server.recruitmenttool.cdamanager.CDATransformer import CDATransformer
 import json
+from py4j.java_gateway import JavaGateway
 now = datetime.datetime.now(tz=timezone.utc)
 
 
@@ -46,7 +51,7 @@ def create_new_criteria(request):
 @api_view(('POST',))
 def validate_saved_criteria(request):
     if request.method == 'POST':
-        # r = request.data
+        r = request.data
         dbhandler = Database_Handler(r)
         #TODO: later Ethicsnumber for identification
         #study_name = r.get('Study_Name')
@@ -59,7 +64,8 @@ def validate_saved_criteria(request):
         #             dbhandler.write_patient_and_CDAData_in_db(file)
         # try:
         result = evaluate_request(study.id)
-        return Response(json.dumps(result), status=status.HTTP_201_CREATED)
+        print(result)
+        return Response(result, status=status.HTTP_201_CREATED)
         # except TODO:
         #     return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
         #                     status=status.HTTP_400_BAD_REQUEST)
@@ -111,3 +117,17 @@ def get_study(request, study_id):
     # result.append(data_set)
     result.append(study_serialized)
     return Response(result, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(('GET',))
+def get_visualized_cda(request, patient_id, document_id):
+    #cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
+    gateway = JavaGateway()
+    xds_connector = gateway.entry_point
+    oid = "1.2.40.0.10.1.4.3.1"
+    cda_file_path = xds_connector.queryDocumentWithId(oid, patient_id, document_id)
+    stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
+    html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
+    # TODO: make temp-directory empty
+    return HttpResponse(html)

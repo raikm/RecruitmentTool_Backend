@@ -24,7 +24,7 @@ def evaluate_request(id):
         patient_result["information_needed_results"] = evaluate_information_need(information_need_list, patient)
         patients_dic["patients"].append(patient_result)
 
-    return json.dumps(patients_dic)
+    return patients_dic
 
 
 def get_patient(patient):

@@ -18,7 +18,6 @@ from django.urls import include, path
 from api.views import create_new_criteria
 from py4j.java_gateway import JavaGateway
 from .cdamanager.CDAExtractor import CDAExtractor
-from .cdamanager.CDATransformer import CDATransformer
 import glob
 
 app_name = "recruitmenttool"
@@ -38,10 +37,10 @@ urlpatterns = [
 def startup():
     print("----------START-DJANGO-SERVER--v2--------\n")
     gateway = JavaGateway()                   # connect to the JVM
-    #xds_connector = gateway.entry_point
-    #xds_connector.testPythonConnection()
+    xds_connector = gateway.entry_point
+    xds_connector.testPythonConnection()
     cda_docs_path = """C:/Users/Raik Müller/Documents/GitHub/eHealthConnectorMiniAPI/src/main/resources/demoDocSource/*.xml"""
-    #stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
+    stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
     oid = "1.2.40.0.10.1.4.3.1"
     id = ""
     # read CDAFile Step by Step
@@ -59,6 +58,6 @@ def startup():
     print("✓ - Data successfully uploaded to XDS Environment\n")
 
     #Test one download
-    #xds_connector.queryRetrieveDemo(oid, str(id))
+
 
 startup()

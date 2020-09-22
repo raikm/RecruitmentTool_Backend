@@ -126,11 +126,3 @@ def get_study(request, study_id):
     return Response(result, status=status.HTTP_200_OK)
 
 
-@csrf_exempt
-@api_view(('GET',))
-def get_visualized_cda(request, cda_id):
-    cda_file = model.CDAFile.objects.all().filter(cda_id=cda_id).first()
-    # check if method can work with "cda_file"?
-    stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
-    html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file, stylesheet_path)
-    return HttpResponse(html)

@@ -8,7 +8,8 @@ urlpatterns = [
     path('create/', create_new_criteria, name='create_new_criteria'),
     path('getAllStudies/', all_studies, name='all_studies'),
     path('getStudy/study_id=<int:study_id>', get_study, name='get_study'),
-    path('getVisualizedCda/cda_id=<int:cda_id>', get_visualized_cda, name='get_visualized_cda'),
+    path('visualizeCda/', get_visualized_cda, name='get_visualized_cda'),
+    #path('getVisualizedCda/cda_id=<int:cda_id>', get_visualized_cda, name='get_visualized_cda'),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('debug/', validate_saved_criteria, name='validate_saved_criteria')
 ]
