@@ -10,3 +10,7 @@ eHealthConnector/*
 Django_Server/recruitmenttool/db.sqlite3
 .idea
 Django_Server/recruitmenttool/recruitmenttool/.DS_Store
+tmp/upload_cda.xml
+Django_Server/recruitmenttool/api/__pycache__/views.cpython-38.pyc.77132312
+Django_Server/recruitmenttool/api/__pycache__/views.cpython-38.pyc.69611320
+Django_Server/recruitmenttool/api/__pycache__/views.cpython-38.pyc.62730040
