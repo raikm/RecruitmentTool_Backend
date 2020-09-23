@@ -61,7 +61,7 @@ def create_new_criteria(request):
 def validate_saved_criteria(request):
     if request.method == 'POST':
         r = request.data
-        #study_name = r.get('Study_Name') # TODO: later Ethicsnumber for identification
+        # study_name = r.get('Study_Name') # TODO: later Ethicsnumber for identification
         study_name = "NVC Glaukom Studie"
         study = model.Study.objects.all().filter(name=study_name)[0]
 
@@ -78,19 +78,17 @@ def validate_saved_criteria(request):
                     document_id = cda_file.get_cda_id()
                     cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
                     if cda_exist is False:
-                        file_name = str(patient_id) + '_' + str(document_id) +'.xml'
+                        file_name = str(patient_id) + '_' + str(document_id) + '.xml'
                         default_storage.save("Django_Server/recruitmenttool/cda_files/tempUpload/" + file_name, file)
-                        xds_connector.uploadDocument(oid, str(patient_id), str(document_id), root_temp_upload_path + file_name)
-
-
-        # try:
-        result = evaluate_request(study.id)
-        print(result)
+                        xds_connector.uploadDocument(oid, str(patient_id), str(document_id),
+                                                     root_temp_upload_path + file_name)
+            gateway.close()
+        try:
+            result = evaluate_request(study.id)
+        except:
+            return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
+                            status=status.HTTP_400_BAD_REQUEST)
         return Response(result, status=status.HTTP_201_CREATED)
-        # except TODO:
-        #     return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
-        #                     status=status.HTTP_400_BAD_REQUEST)
-        # return Response("CREATED", status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt
@@ -148,8 +146,32 @@ def get_visualized_cda(request, patient_id, document_id):
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
     cda_file_path = xds_connector.queryDocumentWithId(oid, patient_id, document_id)
+    if cda_file_path == "NO_DOCUMENT_FOUND":
+        return Response("NO DOCUMENT FOUND", status=status.HTTP_400_BAD_REQUEST)
+
     stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
     html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
     # TODO: make temp-directory empty
     gateway.close()
     return HttpResponse(html)
+
+
+@csrf_exempt
+@api_view(('POST',))
+def prepare_test_data(request):
+    # cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
+    gateway = JavaGateway()
+    xds_connector = gateway.entry_point
+    cda_test_files = glob.glob("C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/*.xml")
+    oid = "1.2.40.0.10.1.4.3.1"
+    for cda_test_file in cda_test_files:
+        cda_file = CDAExtractor(cda_test_file)
+        patient_id = cda_file.get_patient_id()
+        document_id = cda_file.get_cda_id()
+        cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
+        if cda_exist is False:
+            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), cda_test_file)
+            # TODO: make temp-directory empty
+
+    gateway.close()
+    return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
