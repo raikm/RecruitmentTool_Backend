@@ -88,13 +88,13 @@ def evaluate_criterions(critierum_list, patient):
 
             condition_result["evaluation_results"] = evaluation_results
             criterium_result["conditions"].append(condition_result)
-            if hit_watch:
-                global hit_counter
-                hit_counter = hit_counter + 1
+
             criterium_result["criterium_summary_result"] = "hit" if hit_watch else "no_hit"
 
         # TODO: change if negative xPaths are implemented
-
+        if criterium_result["criterium_summary_result"] == "hit":
+            global hit_counter
+            hit_counter = hit_counter + 1
         criterium_results.append(criterium_result)
 
     return criterium_results
@@ -130,8 +130,8 @@ def download_all_files_from_patient(patient_id):
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
     print(oid + " " + str(patient_id))
-    xds_connector.downloadPatientFiles(oid, patient_id)
+    #TODO DEBUG: xds_connector.downloadPatientFiles(oid, patient_id)
     gateway.close()
     # get all cda files from tempDownload
     return glob.glob(
-        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/*.xml")
+        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(patient_id) + "/*.xml")
