@@ -1,5 +1,5 @@
 from django.urls import include, path
-from .views import create_new_criteria, all_studies, get_study, validate_saved_criteria, get_visualized_cda
+from .views import create_new_criteria, all_studies, get_study, validate_saved_criteria, get_visualized_cda, prepare_test_data
 
 app_name = "api"
 

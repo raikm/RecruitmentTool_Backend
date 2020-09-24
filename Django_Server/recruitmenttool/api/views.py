@@ -86,7 +86,7 @@ def validate_saved_criteria(request):
         try:
             result = evaluate_request(study.id)
         except:
-            return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
+            return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
                             status=status.HTTP_400_BAD_REQUEST)
         return Response(result, status=status.HTTP_201_CREATED)
 
@@ -156,6 +156,7 @@ def get_visualized_cda(request, patient_id, document_id):
     return HttpResponse(html)
 
 
+#http://127.0.0.1:8000/api/prepareTestData/
 @csrf_exempt
 @api_view(('POST',))
 def prepare_test_data(request):
@@ -171,7 +172,6 @@ def prepare_test_data(request):
         cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
         if cda_exist is False:
             xds_connector.uploadDocument(oid, str(patient_id), str(document_id), cda_test_file)
-            # TODO: make temp-directory empty
 
     gateway.close()
     return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
