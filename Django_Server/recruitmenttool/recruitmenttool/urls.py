@@ -15,9 +15,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from Django_Server.recruitmenttool.api.views import create_new_criteria
 from py4j.java_gateway import JavaGateway
-from Django_Server.recruitmenttool.cdamanager.CDAExtractor import CDAExtractor
+
+from api.views import create_new_criteria
+from cdamanager.CDAExtractor import CDAExtractor
 import glob
 
 app_name = "recruitmenttool"

@@ -10,16 +10,16 @@ from rest_framework.response import Response
 from django.core.files.storage import default_storage, FileSystemStorage
 from rest_framework import status
 from rest_framework.decorators import api_view
-from Django_Server.recruitmenttool.cdamanager.Evaluations import evaluate_request
-from Django_Server.recruitmenttool.cdamanager.XMLEvaluator import XMLEvaluator
-from Django_Server.recruitmenttool.api.database_handler import Database_Handler
+from cdamanager.Evaluations import evaluate_request
+from cdamanager.XMLEvaluator import XMLEvaluator
+from api.database_handler import Database_Handler
 from django.utils import timezone
 import datetime
 
-import Django_Server.recruitmenttool.api.models as model
-import Django_Server.recruitmenttool.api.serializers as serializer
-from Django_Server.recruitmenttool.cdamanager.CDATransformer import CDATransformer
-from Django_Server.recruitmenttool.cdamanager.CDAExtractor import CDAExtractor
+import api.models as model
+import api.serializers as serializer
+from cdamanager.CDATransformer import CDATransformer
+from cdamanager.CDAExtractor import CDAExtractor
 import json
 from py4j.java_gateway import JavaGateway
 

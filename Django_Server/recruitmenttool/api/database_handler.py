@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
+from .models import Study, Criterium, Condition, CDAFile, Patient, Information_Need
 from Django_Server.recruitmenttool.cdamanager.CDAExtractor import CDAExtractor
-from Django_Server.recruitmenttool.api.models import Study, Criterium, Condition, CDAFile, Patient, Information_Need
 from Django_Server.recruitmenttool.api.helper import validate_json
 import datetime
 import json
