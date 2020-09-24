@@ -77,6 +77,7 @@ def validate_saved_criteria(request):
                     patient_id = cda_file.get_patient_id()
                     document_id = cda_file.get_cda_id()
                     cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
+                    #TODO: write patient infos into DB
                     if cda_exist is False:
                         file_name = str(patient_id) + '_' + str(document_id) + '.xml'
                         default_storage.save("Django_Server/recruitmenttool/cda_files/tempUpload/" + file_name, file)

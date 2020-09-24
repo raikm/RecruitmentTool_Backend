@@ -12,11 +12,13 @@ SATISFIED = "SATISFIED"
 NOT_SATISFIED = "NOT_SATISFIED"
 NO_DATA = "NO_DATA"
 ERROR = "ERROR"
-hit_counter = 0
-
+hit_counter_ek = 0
+hit_counter_ak = 0
 
 def evaluate_request(id):
-    critierum_list = model.Criterium.objects.all().filter(study_id=id)
+    criterium_list = model.Criterium.objects.all().filter(study_id=id)
+    ek_total = len(model.Criterium.objects.all().filter(study_id=id, criterium_type="EK"))
+    ak_total = len(model.Criterium.objects.all().filter(study_id=id, criterium_type="AK"))
     information_need_list = model.Information_Need.objects.all().filter(study_id=id)
     patient_list = model.Patient.objects.all()
     if len(patient_list) == 0: raise Exception("No Patients in DB found")
@@ -24,20 +26,32 @@ def evaluate_request(id):
     patients_dic["patients"] = []
 
     for patient in patient_list:
-        global hit_counter
-        hit_counter = 0
-        patient_result = get_patient(patient)
-        patient_result["criterium_results"] = evaluate_criterions(critierum_list, patient)
-        patient_result["criterium_results_overview"] = hit_counter
+        global hit_counter_ek
+        global hit_counter_ak
+        hit_counter_ek = 0
+        hit_counter_ak = 0
+        patient_result = get_patient(str(patient.patient_id))
+        patient_result["criterium_results"] = evaluate_criterions(criterium_list, patient)
+        patient_result["criterium_results_overview_ek"] = str(hit_counter_ek) + "/" + str(ek_total)
+        patient_result["criterium_results_overview_ak"] = str(hit_counter_ak) + "/" + str(ak_total)
         patient_result["information_needed_results"] = {}#evaluate_information_need(information_need_list, patient)
         patients_dic["patients"].append(patient_result)
 
     return patients_dic
 
 
-def get_patient(patient):
-    return serializer.PatientSerializer(patient).data
-
+def get_patient(patient_id):
+    patient_cda_files = glob.glob("C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
+        patient_id) + "/*.xml")
+    if patient_cda_files is not None and len(patient_cda_files) != 0:
+        patient_cda_file = CDAExtractor(patient_cda_files[0]);
+        patient_details = {}
+        patient_details["birthdate"] = patient_cda_file.get_birthTime()
+        patient_details["first_name"] = patient_cda_file.get_patient_name()["vornamen"][0]
+        patient_details["last_name"] = patient_cda_file.get_patient_name()["nachname"][0]
+        patient_details["title"] = ""
+        return patient_details
+    return None
 
 def get_condtion(condition):
     return serializer.ConditionSerializer(condition).data
@@ -93,8 +107,12 @@ def evaluate_criterions(critierum_list, patient):
 
         # TODO: change if negative xPaths are implemented
         if criterium_result["criterium_summary_result"] == "hit":
-            global hit_counter
-            hit_counter = hit_counter + 1
+            if criterium_result["criterium_type"] == "EK":
+                global hit_counter_ek
+                hit_counter_ek = hit_counter_ek + 1
+            if criterium_result["criterium_type"] == "AK":
+                global hit_counter_ak
+                hit_counter_ak = hit_counter_ak + 1
         criterium_results.append(criterium_result)
 
     return criterium_results
