@@ -12,12 +12,12 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from Django_Server.recruitmenttool.cdamanager.Evaluations import evaluate_request
 from Django_Server.recruitmenttool.cdamanager.XMLEvaluator import XMLEvaluator
-from .database_handler import Database_Handler
+from Django_Server.recruitmenttool.api.database_handler import Database_Handler
 from django.utils import timezone
 import datetime
 
-import api.models as model
-import api.serializers as serializer
+import Django_Server.recruitmenttool.api.models as model
+import Django_Server.recruitmenttool.api.serializers as serializer
 from Django_Server.recruitmenttool.cdamanager.CDATransformer import CDATransformer
 from Django_Server.recruitmenttool.cdamanager.CDAExtractor import CDAExtractor
 import json
