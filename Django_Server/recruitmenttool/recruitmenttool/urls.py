@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import include, path
 from py4j.java_gateway import JavaGateway
 
-from api.views import create_new_criteria
+from api.views import create_and_validate_new_study
 from cdamanager.CDAExtractor import CDAExtractor
 import glob
 
@@ -29,7 +29,7 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #REST FRAMEWORK URLs
     path('api/', include('api.urls', namespace='api')),
-    path('create/', create_new_criteria, name='create_new_criteria'),
+    path('create/', create_and_validate_new_study, name='create_and_validate_new_study'),
 
     #emtpy = index
 ]
@@ -52,7 +52,7 @@ def startup():
         id = extractor.get_patient_id()
         # fix value: (siehe Allgemeiner Leitfaden, Kapitel 6.3.1.2.2)
 
-        documentId = extractor.get_cda_id()
+        documentId = extractor.get_document_id()
         #xds_connector.uploadDocument(oid, str(id), str(documentId), str(cda_file).split("\\")[1])
         # TODO: catch bad files where Data can't be read
 

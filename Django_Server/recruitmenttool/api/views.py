@@ -23,15 +23,13 @@ from cdamanager.CDAExtractor import CDAExtractor
 import json
 from py4j.java_gateway import JavaGateway
 
-from Django_Server.recruitmenttool.recruitmenttool import settings
 
 now = datetime.datetime.now(tz=timezone.utc)
 
 
 @csrf_exempt
 @api_view(('POST',))
-# TODO: RENAME create_and_validate_new_study
-def create_new_criteria(request):
+def create_and_validate_new_study(request):
     if request.method == 'POST':
         r = request.data
         dbhandler = Database_Handler(r)
@@ -40,20 +38,17 @@ def create_new_criteria(request):
             dbhandler.write_criterium_in_db(study)
             dbhandler.write_information_need_in_db(study)
         else:
-            return Response("Fail while creating the study - no name provided?",
+            return Response("Fail while creating the study - no study name provided?",
                             status=status.HTTP_400_BAD_REQUEST)
-        dataList = request.FILES.getlist('file')
-        if dataList:
-            for file in dataList:
-                if XMLEvaluator.evaluate_file_type(str(file)):
-                    dbhandler.write_patient_and_CDAData_in_db(file)
+        file_list = request.FILES.getlist('file')
+        if file_list:
+            Database_Handler.save_cda_files_in_xds(file_list)
         try:
             result = evaluate_request(study.id)
-            return Response(json.loads(result), status=status.HTTP_201_CREATED)
         except Exception:
             return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
                             status=status.HTTP_400_BAD_REQUEST)
-        return Response("CREATED", status=status.HTTP_201_CREATED)
+        return Response(json.loads(result), status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt
@@ -67,23 +62,7 @@ def validate_saved_criteria(request):
 
         file_list = request.FILES.getlist('file')
         if file_list:
-            gateway = JavaGateway()
-            xds_connector = gateway.entry_point
-            oid = "1.2.40.0.10.1.4.3.1"
-            root_temp_upload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempUpload/"
-            for file in file_list:
-                if XMLEvaluator.evaluate_file_type(file):
-                    cda_file = CDAExtractor(file)
-                    patient_id = cda_file.get_patient_id()
-                    document_id = cda_file.get_cda_id()
-                    cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
-                    #TODO: write patient infos into DB
-                    if cda_exist is False:
-                        file_name = str(patient_id) + '_' + str(document_id) + '.xml'
-                        default_storage.save("Django_Server/recruitmenttool/cda_files/tempUpload/" + file_name, file)
-                        xds_connector.uploadDocument(oid, str(patient_id), str(document_id),
-                                                     root_temp_upload_path + file_name)
-            gateway.close()
+            Database_Handler.save_cda_files_in_xds(file_list)
         try:
             result = evaluate_request(study.id)
         except:
@@ -169,7 +148,7 @@ def prepare_test_data(request):
     for cda_test_file in cda_test_files:
         cda_file = CDAExtractor(cda_test_file)
         patient_id = cda_file.get_patient_id()
-        document_id = cda_file.get_cda_id()
+        document_id = cda_file.get_document_id()
         cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
         if cda_exist is False:
             xds_connector.uploadDocument(oid, str(patient_id), str(document_id), cda_test_file)

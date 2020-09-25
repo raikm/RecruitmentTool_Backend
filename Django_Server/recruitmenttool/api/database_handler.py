@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
-from .models import Study, Criterium, Condition, CDAFile, Patient, Information_Need
-from Django_Server.recruitmenttool.cdamanager.CDAExtractor import CDAExtractor
-from Django_Server.recruitmenttool.api.helper import validate_json
+from django.core.files.storage import default_storage
+from py4j.java_gateway import JavaGateway
+
+from .models import Study, Criterion, Condition, Information_Need, Patient  # Patient, CDAFile
+from cdamanager.CDAExtractor import CDAExtractor
+from api.helper import validate_json
 import datetime
 import json
 import html
+from cdamanager import XMLEvaluator
+
 now = datetime.datetime.now()
 
 
@@ -27,25 +32,25 @@ class Database_Handler:
             print("----------Error while creating Study Object----------")
 
     def write_criterium_in_db(self, study):
-        global criterium_list
+        global criterion_list
         criterium_list_str = self.request.get('Criterias[]')
         if criterium_list_str and criterium_list_str != "[]":
             if validate_json(criterium_list_str):
-                criterium_list = json.loads(criterium_list_str)
+                criterion_list = json.loads(criterium_list_str)
             else:
                 print("----------No valide criterium-json----------")
         else:
-            print("----------Error while parsing criterium_list_str----------")
+            print("----------Error while parsing criterion_list_str----------")
 
-        for criterium in criterium_list:
+        for criterion in criterion_list:
             try:
-                criterium_object = Criterium.objects.create(criterium_type=html.unescape(criterium['criteria_type']), name=html.unescape(criterium['name']), study=study)
-                conditions = criterium['conditions']
+                criterion_object = Criterion.objects.create(criterion_type=html.unescape(criterion['criterion_type']), name=html.unescape(criterion['name']), study=study)
+                conditions = criterion['conditions']
 
                 for c in conditions:
-                    Condition.objects.create(name=html.unescape(c['conditionName']), xPath=html.unescape(c['condtionxPath']), value_xPath=html.unescape(c['valuexPath']), criterium=criterium_object)
+                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=html.unescape(c['condtionXpath']), negative_xpath=html.unescape(c['condtionNegativeXpath']), rough_xpath=html.unescape(c['roughXpath']), criterion=criterion_object)
             except:
-                 print("----------Error while creating criterium object or condition----------")
+                 print("----------Error while creating criterion object or condition----------")
 
     def write_information_need_in_db(self, study):
         global information_need_list
@@ -64,36 +69,57 @@ class Database_Handler:
             except:
                  print("----------Error while creating information need object----------")
 
-    def write_patient_and_CDAData_in_db(self, file):
-        extractor = CDAExtractor(file)
-        patient_id_from_cda = extractor.get_patient_id()
-        patient_list = Patient.objects.filter(patient_id = patient_id_from_cda)
-        patient = None
-        if patient_list is None or len(patient_list) == 0:
-            patientfullname = extractor.get_patient_name()
-            try:
-                patient = Patient.objects.create(title="", #TODO add title
-                                              first_name=patientfullname['vornamen'][0],
-                                              middle_names= patientfullname['vornamen'][1],
-                                              last_name= patientfullname['nachname'][0],
-                                              birthdate=extractor.get_birthTime(),
-                                              patient_id=patient_id_from_cda)
-            except:
-                print("----------Error while creating Patient Object----------")
-        else:
-            # if patient already exist
-            patient = patient_list[0]
-
-        cda_id = extractor.get_cda_id()
-        cda_list = CDAFile.objects.filter(cda_id = cda_id)
-        if cda_list is None or len(cda_list) == 0:
-            CDAFile.objects.create(  name=str(file),
-                                     cda_id=cda_id,
-                                     file=file,
-                                     file_date=extractor.get_date_created(),
-                                     upload_date=now,
-                                     patient=patient)
-        else:
-
-            print("----------CDA File exist already - no db-save----------")
-        del extractor
+    # def write_patient_and_CDAData_in_db(self, file):
+    #     extractor = CDAExtractor(file)
+    #     patient_id_from_cda = extractor.get_patient_id()
+    #     patient_list = Patient.objects.filter(patient_id = patient_id_from_cda)
+    #     patient = None
+    #     if patient_list is None or len(patient_list) == 0:
+    #         patientfullname = extractor.get_patient_name()
+    #         try:
+    #             patient = Patient.objects.create(title="", #TODO add title
+    #                                           first_name=patientfullname['vornamen'][0],
+    #                                           middle_names= patientfullname['vornamen'][1],
+    #                                           last_name= patientfullname['nachname'][0],
+    #                                           birthdate=extractor.get_birthTime(),
+    #                                           patient_id=patient_id_from_cda)
+    #         except:
+    #             print("----------Error while creating Patient Object----------")
+    #     else:
+    #         # if patient already exist
+    #         patient = patient_list[0]
+    #
+    #     cda_id = extractor.get_document_id()
+    #     cda_list = CDAFile.objects.filter(cda_id = cda_id)
+    #     if cda_list is None or len(cda_list) == 0:
+    #         CDAFile.objects.create(  name=str(file),
+    #                                  cda_id=cda_id,
+    #                                  file=file,
+    #                                  file_date=extractor.get_date_created(),
+    #                                  upload_date=now,
+    #                                  patient=patient)
+    #     else:
+    #
+    #         print("----------CDA File exist already - no db-save----------")
+    #     del extractor
+    def save_cda_files_in_xds(self, file_list):
+        gateway = JavaGateway()
+        xds_connector = gateway.entry_point
+        oid = "1.2.40.0.10.1.4.3.1"
+        root_temp_upload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempUpload/"
+        for file in file_list:
+            if XMLEvaluator.evaluate_file_type(file):
+                cda_file = CDAExtractor(file)
+                patient_id = cda_file.get_patient_id()
+                patient_list = Patient.objects.filter(patient_id = patient_id)
+                if patient_list is None or len(patient_list) == 0:
+                    Patient.objects.create(patient_id=patient_id)
+                document_id = cda_file.get_document_id()
+                cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
+                # TODO: write patient infos into DB
+                if cda_exist is False:
+                    file_name = str(patient_id) + '_' + str(document_id) + '.xml'
+                    default_storage.save("Django_Server/recruitmenttool/cda_files/tempUpload/" + file_name, file)
+                    xds_connector.uploadDocument(oid, str(patient_id), str(document_id),
+                                                 root_temp_upload_path + file_name)
+        gateway.close()

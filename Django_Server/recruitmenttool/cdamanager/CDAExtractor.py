@@ -41,7 +41,7 @@ class CDAExtractor:
         result = elementpath.select(self.root, xPath, self.namespaces)
         return int(result[0])
 
-    def get_cda_id(self):
+    def get_document_id(self):
         xPath = """/*/id[@root="1.2.40.0.34.99.4613.3.1"]/@extension"""
         result = elementpath.select(self.root, xPath, self.namespaces)
         return float(result[0])

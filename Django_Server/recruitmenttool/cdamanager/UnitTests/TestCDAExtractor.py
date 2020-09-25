@@ -35,7 +35,7 @@ class TestCDAEvaluator(unittest.TestCase):
         self.assertEqual(date, result)
 
     def test_get_cda_id(self):
-        result = self.extractor.get_cda_id()
+        result = self.extractor.get_document_id()
         #self.assertEqual(1, len(result))
         #self.assertEqual("1234567.1", result[0])
 

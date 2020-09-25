@@ -1,22 +1,22 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Study, Criterium, Condition, Patient, CDAFile, Information_Need
+from .models import Study, Criterion, Condition, Information_Need, Patient #Patient, CDAFile,
 
 
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Condition
-        fields = ('name', 'xPath', 'value_xPath')
+        fields = ('name', 'xpath', 'negative_xpath', 'rough_xpath')
 
 
-class CriteriumSerializer(serializers.HyperlinkedModelSerializer):
+class CriterionSerializer(serializers.HyperlinkedModelSerializer):
     conditions = ConditionSerializer(many=True, read_only=True)
     # criterium_type = serializers.CharField(max_length=200)
     # name = serializers.CharField(max_length=200)
 
     class Meta:
-        model = Criterium
-        fields = ('criterium_type', 'name', 'conditions')
+        model = Criterion
+        fields = ('criterion_type', 'name', 'conditions')
 
 
 class InformationNeedSerializer(serializers.HyperlinkedModelSerializer):
@@ -26,28 +26,25 @@ class InformationNeedSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class StudySerializer(serializers.HyperlinkedModelSerializer):
-    criteriums = CriteriumSerializer(many=True, read_only=True)
+    criterions = CriterionSerializer(many=True, read_only=True)
     information_needed = InformationNeedSerializer(many=True, read_only=True)
 
     class Meta:
         model = Study
         fields = ('name', 'description', 'date',
-                  'only_current_patient_cohort', 'criteriums', 'information_needed')
-
-
+                  'only_current_patient_cohort', 'criterions', 'information_needed')
 
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Patient
-        fields = ('title', 'first_name', 'middle_names',
-                  'last_name', 'birthdate', 'patient_id')
+        fields = ('patient_id')
 
-
-class CDAFile(serializers.HyperlinkedModelSerializer):
-    patient = PatientSerializer(many=False, read_only=True)
-
-    class Meta:
-        model = CDAFile
-        fields = ('Name', 'Path', 'File', 'File_Date',
-                  'Upload_Date', 'patient')
+#
+# class CDAFile(serializers.HyperlinkedModelSerializer):
+#     patient = PatientSerializer(many=False, read_only=True)
+#
+#     class Meta:
+#         model = CDAFile
+#         fields = ('Name', 'Path', 'File', 'File_Date',
+#                   'Upload_Date', 'patient')
