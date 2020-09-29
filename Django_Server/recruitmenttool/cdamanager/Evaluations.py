@@ -14,7 +14,10 @@ NOT_SATISFIED = "NOT_SATISFIED"
 NO_DATA = "NO_DATA"
 ERROR = "ERROR"
 hit_counter_ek = 0
+hit_counter_ek_negative = 0
 hit_counter_ak = 0
+hit_counter_ak_negative = 0
+
 
 
 def evaluate_request(id):
@@ -27,14 +30,23 @@ def evaluate_request(id):
     patients_dic = {"patients": []}
 
     for patient in patient_list:
+
         global hit_counter_ek
+        global hit_counter_ek_negative
         global hit_counter_ak
+        global hit_counter_ak_negative
         hit_counter_ek = 0
+        hit_counter_ek_negative = 0
         hit_counter_ak = 0
+        hit_counter_ak_negative = 0
         patient_result = get_patient(str(patient.patient_id))
         patient_result["criterion_results"] = evaluate_criterions(criterion_list, patient)
-        patient_result["criterion_results_overview_ek"] = str(hit_counter_ek) + "/" + str(ek_total)
-        patient_result["criterion_results_overview_ak"] = str(hit_counter_ak) + "/" + str(ak_total)
+        patient_result["criterion_results_overview_ic"] = str(hit_counter_ek)
+        patient_result["criterion_results_overview_ic_negative"] = str(hit_counter_ek_negative)
+        patient_result["criterion_results_overview_ic_no_data"] = str(ek_total - hit_counter_ek - hit_counter_ek_negative)
+        patient_result["criterion_results_overview_ec"] = str(hit_counter_ak)
+        patient_result["criterion_results_overview_ec_negative"] = str(hit_counter_ak_negative)
+        patient_result["criterion_results_overview_ec_no_data"] = str(ak_total - hit_counter_ak - hit_counter_ak_negative)
         patient_result["information_needed_results"] = {}  # evaluate_information_need(information_need_list, patient)
         patients_dic["patients"].append(patient_result)
 
@@ -48,6 +60,7 @@ def get_patient(patient_id):
     if patient_cda_files is not None and len(patient_cda_files) != 0:
         patient_cda_file = CDAExtractor(patient_cda_files[0]);
         patient_details = {}
+        patient_details["patient_id"] = patient_cda_file.get_patient_id()
         patient_details["birthdate"] = patient_cda_file.get_birthTime()
         patient_details["first_name"] = patient_cda_file.get_patient_name()["vornamen"][0]
         patient_details["last_name"] = patient_cda_file.get_patient_name()["nachname"][0]
@@ -123,6 +136,13 @@ def evaluate_criterions(criterion_list, patient):
             if criterion_result["criterion_type"] == "AK":
                 global hit_counter_ak
                 hit_counter_ak = hit_counter_ak + 1
+        if criterion_result["criterion_summary_result"] == "negative_hit":
+            if criterion_result["criterion_type"] == "EK":
+                global hit_counter_ek_negative
+                hit_counter_ek_negative = hit_counter_ek_negative + 1
+            if criterion_result["criterion_type"] == "AK":
+                global hit_counter_ak_negative
+                hit_counter_ak_negative = hit_counter_ak_negative + 1
         criterion_results.append(criterion_result)
 
     return criterion_results
