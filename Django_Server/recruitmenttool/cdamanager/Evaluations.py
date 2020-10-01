@@ -101,15 +101,15 @@ def evaluate_criterions(criterion_list, patient):
                 values_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.rough_xpath, file_path)
 
                 if len(evaluation_result) > 0:
-                    hit = {"hit_result": evaluation_result, "document_id": xml_file.get_document_id()}
+                    hit = {"hit_result": evaluation_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
                     evaluation_results["positive_hits"].append(hit)
                     evaluation_results["evaluation_result_summary"] = "positive_hit"
                 if evaluation_negative_result is not None and len(evaluation_negative_result) > 0:
-                    hit = {"hit_result": evaluation_negative_result, "cda_id": xml_file.get_document_id()}
+                    hit = {"hit_result": evaluation_negative_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
                     evaluation_results["negative_hits"].append(hit)
                     evaluation_results["evaluation_result_summary"] = "negative_hit"
                 if len(values_result) > 0:
-                    value_result = {"value_result": values_result, "cda_id": xml_file.get_document_id()}
+                    value_result = {"value_result": values_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
                     value_results["values"].append(value_result)
 
             if len(evaluation_results["positive_hits"]) == 0 and len(evaluation_results["negative_hits"]) == 0:
