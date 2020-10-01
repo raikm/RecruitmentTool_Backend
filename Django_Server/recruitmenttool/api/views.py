@@ -35,14 +35,14 @@ def create_and_validate_new_study(request):
         dbhandler = Database_Handler(r)
         study = dbhandler.write_study_in_db()
         if study is not None:
-            dbhandler.write_criterium_in_db(study)
+            dbhandler.write_criterion_in_db(study)
             dbhandler.write_information_need_in_db(study)
         else:
             return Response("Fail while creating the study - no study name provided?",
                             status=status.HTTP_400_BAD_REQUEST)
         file_list = request.FILES.getlist('file')
         if file_list:
-            Database_Handler.save_cda_files_in_xds(file_list)
+            Database_Handler.save_cda_files_in_xds(Database_Handler, file_list)
         try:
             result = evaluate_request(study.id)
         except Exception:
@@ -56,8 +56,8 @@ def create_and_validate_new_study(request):
 def validate_saved_criteria(request):
     if request.method == 'POST':
         r = request.data
-        # study_name = r.get('Study_Name') # TODO: later Ethicsnumber for identification
-        study_name = "NVC Glaukom Studie"
+        study_name = r.get('Study_Name') # TODO: later Ethicsnumber for identification
+        #study_name = "NVC Glaukom Studie"
         study = model.Study.objects.all().filter(name=study_name)[0]
 
         file_list = request.FILES.getlist('file')

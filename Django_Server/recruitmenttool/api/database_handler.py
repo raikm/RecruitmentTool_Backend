@@ -8,7 +8,7 @@ from api.helper import validate_json
 import datetime
 import json
 import html
-from cdamanager import XMLEvaluator
+from cdamanager.XMLEvaluator import XMLEvaluator
 
 now = datetime.datetime.now()
 
@@ -31,12 +31,12 @@ class Database_Handler:
         except:
             print("----------Error while creating Study Object----------")
 
-    def write_criterium_in_db(self, study):
+    def write_criterion_in_db(self, study):
         global criterion_list
-        criterium_list_str = self.request.get('Criterias[]')
-        if criterium_list_str and criterium_list_str != "[]":
-            if validate_json(criterium_list_str):
-                criterion_list = json.loads(criterium_list_str)
+        criterion_list_str = self.request.get('Criterions[]')
+        if criterion_list_str and criterion_list_str != "[]":
+            if validate_json(criterion_list_str):
+                criterion_list = json.loads(criterion_list_str)
             else:
                 print("----------No valide criterium-json----------")
         else:
@@ -53,15 +53,13 @@ class Database_Handler:
                  print("----------Error while creating criterion object or condition----------")
 
     def write_information_need_in_db(self, study):
-        global information_need_list
+        information_need_list = None
         information_need_list_str = self.request.get('Information_Needs[]')
         if information_need_list_str and information_need_list_str != "[]":
             if validate_json(information_need_list_str):
                 information_need_list = json.loads(information_need_list_str)
             else:
                 print("----------No valide information-need-json----------")
-        else:
-            print("----------Error while parsing information_need_list_str----------")
 
         for information_need in information_need_list:
             try:
@@ -108,7 +106,7 @@ class Database_Handler:
         oid = "1.2.40.0.10.1.4.3.1"
         root_temp_upload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempUpload/"
         for file in file_list:
-            if XMLEvaluator.evaluate_file_type(file):
+            if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_list = Patient.objects.filter(patient_id = patient_id)

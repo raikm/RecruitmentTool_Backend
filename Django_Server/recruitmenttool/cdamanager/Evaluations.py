@@ -59,12 +59,10 @@ def get_patient(patient_id):
             patient_id) + "/*.xml")
     if patient_cda_files is not None and len(patient_cda_files) != 0:
         patient_cda_file = CDAExtractor(patient_cda_files[0]);
-        patient_details = {}
-        patient_details["patient_id"] = patient_cda_file.get_patient_id()
-        patient_details["birthdate"] = patient_cda_file.get_birthTime()
-        patient_details["first_name"] = patient_cda_file.get_patient_name()["vornamen"][0]
-        patient_details["last_name"] = patient_cda_file.get_patient_name()["nachname"][0]
-        patient_details["title"] = ""
+        patient_details = {"patient_id": patient_cda_file.get_patient_id(),
+                           "birthdate": patient_cda_file.get_birthTime(),
+                           "first_name": patient_cda_file.get_patient_name()["vornamen"][0],
+                           "last_name": patient_cda_file.get_patient_name()["nachname"][0], "title": ""}
         return patient_details
     return None
 
@@ -151,8 +149,7 @@ def evaluate_criterions(criterion_list, patient):
 def evaluate_information_need(information_need_list, patient):
     information_need_results = []
     for information in information_need_list:
-        information_result = {}
-        information_result["name"] = information.name
+        information_result = {"name": information.name}
         patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient.id)
 
         evaluation_related_cda = None
