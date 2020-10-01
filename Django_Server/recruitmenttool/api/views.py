@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import glob
-import os
 import os.path
+from os import path
 
 from django.core.files.base import ContentFile
 from django.http import HttpResponse
@@ -73,13 +73,6 @@ def validate_saved_criteria(request):
 
 @csrf_exempt
 @api_view(('GET',))
-def create_new_criteria_DEBUG(request):
-    result = evaluate_request(221)
-    return Response(result, status=status.HTTP_201_CREATED)
-
-
-@csrf_exempt
-@api_view(('GET',))
 def all_studies(request):
     study_list = model.Study.objects.all()
     result = []
@@ -125,10 +118,12 @@ def get_visualized_cda(request, patient_id, document_id):
     gateway = JavaGateway()
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
-    cda_file_path = xds_connector.queryDocumentWithId(oid, patient_id, document_id)
+    root_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload"
+    cda_file_path = root_path + "/" +  patient_id + "/" + document_id + "_" + patient_id + ".xml"
+    if not path.exists(cda_file_path):
+        cda_file_path = xds_connector.queryDocumentWithId(oid, patient_id, document_id)
     if cda_file_path == "NO_DOCUMENT_FOUND":
         return Response("NO DOCUMENT FOUND", status=status.HTTP_400_BAD_REQUEST)
-
     stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
     html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
     # TODO: make temp-directory empty
@@ -136,11 +131,9 @@ def get_visualized_cda(request, patient_id, document_id):
     return HttpResponse(html)
 
 
-#http://127.0.0.1:8000/api/prepareTestData/
 @csrf_exempt
 @api_view(('POST',))
 def prepare_test_data(request):
-    # cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
     gateway = JavaGateway()
     xds_connector = gateway.entry_point
     cda_test_files = glob.glob("C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/*.xml")

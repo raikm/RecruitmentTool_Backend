@@ -5,7 +5,6 @@ from py4j.java_gateway import JavaGateway
 
 from .CDAEvaluator import CDAEvaluator as evaluator
 from .CDAExtractor import CDAExtractor
-import json
 import api.serializers as serializer
 from collections import Counter
 
@@ -175,9 +174,8 @@ def download_all_files_from_patient(patient_id):
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
     print(oid + " " + str(patient_id))
-    # TODO DEBUG: xds_connector.downloadPatientFiles(oid, patient_id)
+    xds_connector.downloadPatientFiles(oid, str(patient_id))
     gateway.close()
-    # get all cda files from tempDownload
     return glob.glob(
         "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
             patient_id) + "/*.xml")
