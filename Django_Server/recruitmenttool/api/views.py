@@ -65,7 +65,8 @@ def validate_saved_criteria(request):
             Database_Handler.save_cda_files_in_xds(file_list)
         try:
             result = evaluate_request(study.id)
-        except:
+        except Exception:
+            print(Exception)
             return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
                             status=status.HTTP_400_BAD_REQUEST)
         return Response(result, status=status.HTTP_201_CREATED)

@@ -5,6 +5,7 @@ import sys
 # sys.path.append("/Volumes/Macintosh HDD/Benutzer/RaikMueller/libsaxon-EEC-mac-setup-v1.2.1/Saxon.C.API/python-saxon")
 # from saxonc import *
 # import saxonc
+import pytz
 
 class CDAExtractor:
 
@@ -44,14 +45,23 @@ class CDAExtractor:
     def get_document_id(self):
         xPath = """/*/id[@root="1.2.40.0.34.99.4613.3.1"]/@extension"""
         result = elementpath.select(self.root, xPath, self.namespaces)
-        return float(result[0])
+        #TODO: define all possible Document ID xPaths
+        if len(result) == 0:
+            xPath = """/*/id[@root="1.2.40.0.10.1.4.3.4.2.1"]/@extension"""
+            result = elementpath.select(self.root, xPath, self.namespaces)
+        return result[0]
 
     def get_date_created(self):
-        xPath = """/*/effectiveTime/@value"""
+        xPath = """/ClinicalDocument/effectiveTime/@value"""
         resultStr = elementpath.select(self.root, xPath, self.namespaces)
         result = None
-        if len(resultStr) > 0:
+        #print(resultStr[0])
+        #TODO: falsches Datum abfangen
+        if len(resultStr[0]) == 19:
             result = datetime.strptime(resultStr[0], '%Y%m%d%H%M%S%z')
+        if len(resultStr[0]) == 8:
+            result = datetime.strptime(resultStr[0], '%Y%m%d')
+            result = pytz.utc.localize(result)
         return result
 
     def get_CDA_type(self):

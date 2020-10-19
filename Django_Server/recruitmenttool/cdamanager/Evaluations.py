@@ -85,7 +85,7 @@ def evaluate_criterions(criterion_list, patient):
             value_results = {"values": []}
 
             # TODO: check if works: order patient_cda_files by date
-            patient_file_paths.sort(key=lambda fp: CDAExtractor(fp).get_date_created())
+            patient_file_paths.sort(key=lambda fp: CDAExtractor(fp).get_date_created(), reverse=True)
             for file_path in patient_file_paths:
                 xml_file = CDAExtractor(file_path)
                 # sollte von alt nach neu abfragen, sodass neuste = evaluation_result_summary
@@ -111,10 +111,10 @@ def evaluate_criterions(criterion_list, patient):
 
             if len(evaluation_results["positive_hits"]) == 0 and len(evaluation_results["negative_hits"]) == 0:
                 evaluation_results["evaluation_result_summary"] = "no_hit"
-
+            condition_result["value_results"] = value_results
             condition_result["evaluation_results"] = evaluation_results
             criterion_result["conditions"].append(condition_result)
-        # condition_results: hit no_hit hit no_hit negative_hid
+
         tokens = criterion_result["conditions"]
         count_evaluation_summary = Counter(tok['evaluation_results']['evaluation_result_summary'] for tok in tokens)
         if "positive_hit" in count_evaluation_summary:
@@ -173,7 +173,7 @@ def download_all_files_from_patient(patient_id):
     gateway = JavaGateway()
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
-    print(oid + " " + str(patient_id))
+    print("Patient Files get processed from: " + str(patient_id))
     xds_connector.downloadPatientFiles(oid, str(patient_id))
     gateway.close()
     return glob.glob(
