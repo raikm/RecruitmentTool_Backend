@@ -2,7 +2,7 @@ import glob
 
 import api.models as model
 from py4j.java_gateway import JavaGateway
-
+import json
 from .CDAEvaluator import CDAEvaluator as evaluator
 from .CDAExtractor import CDAExtractor
 import api.serializers as serializer
@@ -19,17 +19,15 @@ hit_counter_ak_negative = 0
 
 
 
-def evaluate_request(id):
+def evaluate_request(id, selected_patient_list):
     criterion_list = model.Criterion.objects.all().filter(study_id=id)
     ek_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="EK"))
     ak_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="AK"))
     information_need_list = model.Information_Need.objects.all().filter(study_id=id)
-    patient_list = model.Patient.objects.all()
-    if len(patient_list) == 0: raise Exception("No Patients in DB found")
+    if len(selected_patient_list) == 0: raise Exception("No Patients in DB found")
     patients_dic = {"patients": []}
 
-    for patient in patient_list:
-
+    for patient in selected_patient_list:
         global hit_counter_ek
         global hit_counter_ek_negative
         global hit_counter_ak
@@ -38,7 +36,7 @@ def evaluate_request(id):
         hit_counter_ek_negative = 0
         hit_counter_ak = 0
         hit_counter_ak_negative = 0
-        patient_result = get_patient(str(patient.patient_id))
+        patient_result = get_patient(str(patient['patient_id']))
         patient_result["criterion_results"] = evaluate_criterions(criterion_list, patient)
         patient_result["criterion_results_overview_ic"] = str(hit_counter_ek)
         patient_result["criterion_results_overview_ic_negative"] = str(hit_counter_ek_negative)
@@ -71,7 +69,7 @@ def get_condtion(condition):
 
 
 def evaluate_criterions(criterion_list, patient):
-    patient_file_paths = download_all_files_from_patient(str(patient.patient_id))
+    patient_file_paths = download_all_files_from_patient(str(patient['patient_id']))
 
     criterion_results = []
     for criterion in criterion_list:
@@ -149,7 +147,7 @@ def evaluate_information_need(information_need_list, patient):
     information_need_results = []
     for information in information_need_list:
         information_result = {"name": information.name}
-        patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient.id)
+        patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient['patient_id'])
 
         evaluation_related_cda = None
         values_result = []

@@ -38,7 +38,7 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Patient
-        fields = ('patient_id')
+        fields = ('patient_id', 'patient_first_name', 'patient_last_name')
 
 #
 # class CDAFile(serializers.HyperlinkedModelSerializer):

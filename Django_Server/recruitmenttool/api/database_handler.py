@@ -109,7 +109,8 @@ class Database_Handler:
             if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
-                patient_list = Patient.objects.filter(patient_id = patient_id)
+                patient_full_name = cda_file.get_patient_name()
+                patient_list = Patient.objects.filter(patient_id = patient_id, patient_first_name = patient_full_name['vornamen'][0], patient_last_name = patient_full_name['nachname'][0])
                 if patient_list is None or len(patient_list) == 0:
                     Patient.objects.create(patient_id=patient_id)
                 document_id = cda_file.get_document_id()

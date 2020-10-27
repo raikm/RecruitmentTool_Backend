@@ -30,8 +30,9 @@ class Information_Need(models.Model):
 
 
 class Patient(models.Model):
-   patient_id = models.IntegerField()
-
+    patient_id = models.IntegerField()
+    patient_first_name = models.CharField(max_length=100)
+    patient_last_name = models.CharField(max_length=100)
 
 #class CDAFile(models.Model):
 #    name = models.CharField(max_length=400)

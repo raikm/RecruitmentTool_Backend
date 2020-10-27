@@ -15,14 +15,14 @@ from cdamanager.XMLEvaluator import XMLEvaluator
 from api.database_handler import Database_Handler
 from django.utils import timezone
 import datetime
-
+from api.helper import validate_json
 import api.models as model
 import api.serializers as serializer
 from cdamanager.CDATransformer import CDATransformer
 from cdamanager.CDAExtractor import CDAExtractor
 import json
 from py4j.java_gateway import JavaGateway
-
+import html
 
 now = datetime.datetime.now(tz=timezone.utc)
 
@@ -62,11 +62,19 @@ def validate_saved_criteria(request):
 
         file_list = request.FILES.getlist('file')
         if file_list:
-            Database_Handler.save_cda_files_in_xds(file_list)
+            Database_Handler.save_cda_files_in_xds(Database_Handler, file_list)
+        selected_patient_list_str = r.get('Selected_Patients[]')
+        if selected_patient_list_str and selected_patient_list_str != "[]":
+            if validate_json(selected_patient_list_str):
+
+                selected_patient_list = json.loads(selected_patient_list_str)
+
+            else:
+                print("----------No valide selected patient-json----------")
         try:
-            result = evaluate_request(study.id)
-        except Exception:
-            print(Exception)
+            result = evaluate_request(study.id, selected_patient_list)
+        except Exception as e:
+            print(e)
             return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
                             status=status.HTTP_400_BAD_REQUEST)
         return Response(result, status=status.HTTP_201_CREATED)
@@ -149,3 +157,15 @@ def prepare_test_data(request):
 
     gateway.close()
     return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
+
+
+@csrf_exempt
+@api_view(('GET',))
+def get_patients(request):
+    patient_list = model.Patient.objects.all()
+    result = []
+    for patient in patient_list:
+        patient_result = serializer.PatientSerializer(patient).data
+        result.append(patient_result)
+
+    return Response(result, status=status.HTTP_200_OK)
