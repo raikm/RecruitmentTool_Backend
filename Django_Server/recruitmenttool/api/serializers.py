@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Study, Criterion, Condition, Information_Need, Patient #Patient, CDAFile,
+from .models import Study, Criterion, Condition, Information_Need, Patient
 
 
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
@@ -36,9 +36,12 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
+    studies = StudySerializer(many=True, read_only=True)
     class Meta:
         model = Patient
-        fields = ('patient_id', 'patient_first_name', 'patient_last_name')
+        fields = ('patient_id', 'patient_first_name', 'patient_last_name', 'studies')
+
+
 
 #
 # class CDAFile(serializers.HyperlinkedModelSerializer):

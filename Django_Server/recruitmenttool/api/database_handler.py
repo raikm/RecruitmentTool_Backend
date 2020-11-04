@@ -2,13 +2,15 @@
 from django.core.files.storage import default_storage
 from py4j.java_gateway import JavaGateway
 
-from .models import Study, Criterion, Condition, Information_Need, Patient  # Patient, CDAFile
+from .models import Study, Criterion, Condition, Information_Need, Patient
 from cdamanager.CDAExtractor import CDAExtractor
 from api.helper import validate_json
 import datetime
 import json
 import html
 from cdamanager.XMLEvaluator import XMLEvaluator
+import api.serializers as serializer
+
 
 now = datetime.datetime.now()
 
@@ -105,14 +107,19 @@ class Database_Handler:
         xds_connector = gateway.entry_point
         oid = "1.2.40.0.10.1.4.3.1"
         root_temp_upload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempUpload/"
+        result = []
         for file in file_list:
             if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_full_name = cda_file.get_patient_name()
+                if not any(obj['patient_id'] == patient_id for obj in result):
+                    result.append(self.create_patient_list(self, patient_id, patient_full_name))
+
                 patient_list = Patient.objects.filter(patient_id = patient_id, patient_first_name = patient_full_name['vornamen'][0], patient_last_name = patient_full_name['nachname'][0])
                 if patient_list is None or len(patient_list) == 0:
-                    Patient.objects.create(patient_id=patient_id)
+                    Patient.objects.create(patient_id=patient_id, patient_first_name=patient_full_name['vornamen'][0],
+                                                      patient_last_name=patient_full_name['nachname'][0])
                 document_id = cda_file.get_document_id()
                 cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
                 # TODO: write patient infos into DB
@@ -122,3 +129,63 @@ class Database_Handler:
                     xds_connector.uploadDocument(oid, str(patient_id), str(document_id),
                                                  root_temp_upload_path + file_name)
         gateway.close()
+        return result
+
+    def save_cda_files_in_cache(self, file_list):
+        result = []
+        for file in file_list:
+            if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
+                cda_file = CDAExtractor(file)
+                patient_id = cda_file.get_patient_id()
+                patient_full_name = cda_file.get_patient_name()
+                if not any(obj['patient_id'] == patient_id for obj in result):
+                    result.append(self.create_patient_list(self, patient_id, patient_full_name))
+                patient_list = Patient.objects.filter(patient_id=patient_id)
+                if patient_list is None or len(patient_list) == 0:
+                    Patient.objects.create(patient_id=patient_id, patient_first_name=patient_full_name['vornamen'][0],
+                                                      patient_last_name=patient_full_name['nachname'][0])
+                document_id = cda_file.get_document_id()
+                file_name = str(patient_id) + '_' + str(document_id) + '.xml'
+                default_storage.save("Django_Server/recruitmenttool/cda_files/tempCache/" + str(patient_id) + "/" + file_name, file)
+        return result
+
+    def write_selected_patients_in_db(self):
+        try:
+            selected_patient_list_str = self.request.get('Selected_Patients[]')
+            study_id = self.request.get('Study_Id')
+            selected_patient_list = []
+            if selected_patient_list_str and selected_patient_list_str != "[]":
+                if validate_json(selected_patient_list_str):
+                    selected_patient_list = json.loads(selected_patient_list_str)
+            study = Study.objects.filter(id=study_id).first()
+            for patient_id in selected_patient_list:
+                p = Patient.objects.filter(patient_id=patient_id).first()
+                p.studies.add(study)
+        except Exception as e:
+            print(e)
+            print("----------Error while creating SelectedPatient Object----------")
+
+
+    def get_selected_patients(self, request, study_id):
+        try:
+            study = Study.objects.filter(id=study_id).first()
+            selected_patients_study = list(Patient.objects.filter(studies=study).all())
+            result = []
+
+            for patient in selected_patients_study:
+                patient_result = serializer.PatientSerializer(patient).data
+                #TODO: could be optimzed if all the clutter from the study object is removed
+                result.append(patient_result)
+
+            return result
+        except Exception as e:
+            print(e)
+            print("----------Error while creating SelectedPatient Object----------")
+
+
+    def create_patient_list(self, patient_id, patient_full_name):
+            patient_first_name = patient_full_name['vornamen'][0]
+            patient_last_name = patient_full_name['nachname'][0]
+            return {"patient_id": patient_id, "patient_first_name": patient_first_name,
+                              "patient_last_name": patient_last_name}
+

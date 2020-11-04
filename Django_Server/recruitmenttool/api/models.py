@@ -33,6 +33,9 @@ class Patient(models.Model):
     patient_id = models.IntegerField()
     patient_first_name = models.CharField(max_length=100)
     patient_last_name = models.CharField(max_length=100)
+    studies = models.ManyToManyField(Study)
+
+
 
 #class CDAFile(models.Model):
 #    name = models.CharField(max_length=400)

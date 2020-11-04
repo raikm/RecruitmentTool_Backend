@@ -19,13 +19,13 @@ hit_counter_ak_negative = 0
 
 
 
-def evaluate_request(id, selected_patient_list):
+def evaluate_request(id, selected_patient_list, local_analysis):
     criterion_list = model.Criterion.objects.all().filter(study_id=id)
     ek_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="EK"))
     ak_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="AK"))
     information_need_list = model.Information_Need.objects.all().filter(study_id=id)
     if len(selected_patient_list) == 0: raise Exception("No Patients in DB found")
-    patients_dic = {"patients": []}
+    result_dic = {"patients": [], "study_id": id}
 
     for patient in selected_patient_list:
         global hit_counter_ek
@@ -37,7 +37,7 @@ def evaluate_request(id, selected_patient_list):
         hit_counter_ak = 0
         hit_counter_ak_negative = 0
         patient_result = get_patient(str(patient['patient_id']))
-        patient_result["criterion_results"] = evaluate_criterions(criterion_list, patient)
+        patient_result["criterion_results"] = evaluate_criterions(criterion_list, patient, local_analysis)
         patient_result["criterion_results_overview_ic"] = str(hit_counter_ek)
         patient_result["criterion_results_overview_ic_negative"] = str(hit_counter_ek_negative)
         patient_result["criterion_results_overview_ic_no_data"] = str(ek_total - hit_counter_ek - hit_counter_ek_negative)
@@ -45,9 +45,9 @@ def evaluate_request(id, selected_patient_list):
         patient_result["criterion_results_overview_ec_negative"] = str(hit_counter_ak_negative)
         patient_result["criterion_results_overview_ec_no_data"] = str(ak_total - hit_counter_ak - hit_counter_ak_negative)
         patient_result["information_needed_results"] = {}  # evaluate_information_need(information_need_list, patient)
-        patients_dic["patients"].append(patient_result)
+        result_dic["patients"].append(patient_result)
 
-    return patients_dic
+    return result_dic
 
 
 def get_patient(patient_id):
@@ -68,13 +68,15 @@ def get_condtion(condition):
     return serializer.ConditionSerializer(condition).data
 
 
-def evaluate_criterions(criterion_list, patient):
-    patient_file_paths = download_all_files_from_patient(str(patient['patient_id']))
+def evaluate_criterions(criterion_list, patient, local_analysis):
 
+    if local_analysis is False:
+        patient_file_paths = download_all_files_from_patient(str(patient['patient_id']))
+    else:
+        patient_file_paths = get_cache_files(str(patient['patient_id']))
     criterion_results = []
     for criterion in criterion_list:
         criterion_result = {"name": criterion.name, "criterion_type": criterion.criterion_type, "conditions": []}
-
         conditions = model.Condition.objects.all().filter(criterion_id=criterion.id)
         for condition in conditions:
             condition_result = {"name": condition.name}
@@ -176,4 +178,10 @@ def download_all_files_from_patient(patient_id):
     gateway.close()
     return glob.glob(
         "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
+            patient_id) + "/*.xml")
+
+
+def get_cache_files(patient_id):
+    return glob.glob(
+        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/" + str(
             patient_id) + "/*.xml")

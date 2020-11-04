@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
+import distutils
 import glob
 import os.path
 from os import path
 
 from django.core.files.base import ContentFile
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.response import Response
 from django.core.files.storage import default_storage, FileSystemStorage
@@ -22,6 +23,9 @@ from cdamanager.CDATransformer import CDATransformer
 from cdamanager.CDAExtractor import CDAExtractor
 import json
 from py4j.java_gateway import JavaGateway
+from distutils import util
+
+
 import html
 
 now = datetime.datetime.now(tz=timezone.utc)
@@ -60,19 +64,15 @@ def validate_saved_criteria(request):
         #study_name = "NVC Glaukom Studie"
         study = model.Study.objects.all().filter(name=study_name)[0]
 
-        file_list = request.FILES.getlist('file')
-        if file_list:
-            Database_Handler.save_cda_files_in_xds(Database_Handler, file_list)
         selected_patient_list_str = r.get('Selected_Patients[]')
         if selected_patient_list_str and selected_patient_list_str != "[]":
             if validate_json(selected_patient_list_str):
-
                 selected_patient_list = json.loads(selected_patient_list_str)
-
             else:
                 print("----------No valide selected patient-json----------")
         try:
-            result = evaluate_request(study.id, selected_patient_list)
+            local_analysis = bool(distutils.util.strtobool(r.get('Local_Analysis')))
+            result = evaluate_request(study.id, selected_patient_list, local_analysis)
         except Exception as e:
             print(e)
             return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
@@ -169,3 +169,34 @@ def get_patients(request):
         result.append(patient_result)
 
     return Response(result, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(('POST',))
+def save_selected_patients(request):
+    r = request.data
+    dbhandler = Database_Handler(r)
+    dbhandler.write_selected_patients_in_db()
+    return Response("SELECTED PATIENTS SAVED", status=status.HTTP_201_CREATED)
+
+
+@csrf_exempt
+@api_view(('GET',))
+def get_selected_patients(request, study_id):
+    r = request.data
+    dbhandler = Database_Handler(r)
+    selected_patients = dbhandler.get_selected_patients(request, study_id)
+    return JsonResponse(selected_patients, safe=False, status=status.HTTP_200_OK)
+
+
+@csrf_exempt
+@api_view(('POST',))
+def validate_selected_cda_files(request):
+    r = request.data
+    file_list = request.FILES.getlist('file')
+    repository_save = bool(distutils.util.strtobool(r.get('Repository_Save')))
+    if file_list and repository_save:
+        result = Database_Handler.save_cda_files_in_xds(Database_Handler, file_list)
+    elif file_list and repository_save is False:
+        result = Database_Handler.save_cda_files_in_cache(Database_Handler, file_list)
+    return JsonResponse(result, safe=False, status=status.HTTP_200_OK)
