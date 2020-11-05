@@ -10,7 +10,7 @@ import json
 import html
 from cdamanager.XMLEvaluator import XMLEvaluator
 import api.serializers as serializer
-
+import os
 
 now = datetime.datetime.now()
 
@@ -146,6 +146,9 @@ class Database_Handler:
                                                       patient_last_name=patient_full_name['nachname'][0])
                 document_id = cda_file.get_document_id()
                 file_name = str(patient_id) + '_' + str(document_id) + '.xml'
+                temp_cache_file = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/" + str(patient_id) + "/" + file_name
+                if os.path.exists(temp_cache_file):
+                    os.remove(temp_cache_file)
                 default_storage.save("Django_Server/recruitmenttool/cda_files/tempCache/" + str(patient_id) + "/" + file_name, file)
         return result
 
@@ -165,6 +168,21 @@ class Database_Handler:
             print(e)
             print("----------Error while creating SelectedPatient Object----------")
 
+    def update_selected_patients_in_db(self):
+        try:
+            selected_patient_list_str = self.request.get('Rejected_Patients[]')
+            study_id = self.request.get('Study_Id')
+            selected_patient_list = []
+            if selected_patient_list_str and selected_patient_list_str != "[]":
+                if validate_json(selected_patient_list_str):
+                    selected_patient_list = json.loads(selected_patient_list_str)
+            study = Study.objects.filter(id=study_id).first()
+            for patient_id in selected_patient_list:
+                p = Patient.objects.filter(patient_id=patient_id).first()
+                p.studies.remove(study)
+        except Exception as e:
+            print(e)
+            print("----------Error while updating SelectedPatient Object----------")
 
     def get_selected_patients(self, request, study_id):
         try:
@@ -188,4 +206,5 @@ class Database_Handler:
             patient_last_name = patient_full_name['nachname'][0]
             return {"patient_id": patient_id, "patient_first_name": patient_first_name,
                               "patient_last_name": patient_last_name}
+
 

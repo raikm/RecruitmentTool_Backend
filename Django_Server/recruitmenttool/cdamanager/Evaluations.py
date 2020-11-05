@@ -185,3 +185,6 @@ def get_cache_files(patient_id):
     return glob.glob(
         "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/" + str(
             patient_id) + "/*.xml")
+
+
+

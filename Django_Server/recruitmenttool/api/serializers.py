@@ -31,7 +31,7 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Study
-        fields = ('name', 'description', 'date',
+        fields = ('id', 'name', 'description', 'date',
                   'only_current_patient_cohort', 'criterions', 'information_needed')
 
 
