@@ -18,8 +18,9 @@ class Criterion(models.Model):
 class Condition(models.Model):
     name = models.CharField(max_length=100)
     xpath = models.CharField(max_length=1000)
-    negative_xpath = models.CharField(max_length=1000)
+    negative_xpath = models.CharField(max_length=1000, null=True, blank=True)
     rough_xpath = models.CharField(max_length=1000)
+    rough_xpath_description = models.CharField(max_length=150)
     criterion = models.ForeignKey(Criterion, related_name='conditions', on_delete=models.CASCADE)
 
 

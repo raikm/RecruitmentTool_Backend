@@ -20,7 +20,7 @@ hit_counter_ak_negative = 0
 
 
 def evaluate_request(id, selected_patient_list, local_analysis):
-    criterion_list = model.Criterion.objects.all().filter(study_id=id)
+    criterion_list = model.Criterion.objects.all().filter(study_id=id).order_by('-criterion_type')
     ek_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="EK"))
     ak_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="AK"))
     information_need_list = model.Information_Need.objects.all().filter(study_id=id)
@@ -106,7 +106,7 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
                     evaluation_results["negative_hits"].append(hit)
                     evaluation_results["evaluation_result_summary"] = "negative_hit"
                 if len(values_result) > 0:
-                    value_result = {"value_result": values_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
+                    value_result = {"value_result": values_result, "value_result_description": condition.rough_xpath_description, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
                     value_results["values"].append(value_result)
 
             if len(evaluation_results["positive_hits"]) == 0 and len(evaluation_results["negative_hits"]) == 0:
@@ -126,7 +126,7 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
         if "no_hit" in count_evaluation_summary and "positive_hit" not in count_evaluation_summary and "negative_hit" not in count_evaluation_summary:
             criterion_result["criterion_summary_result"] = "no_hit"
 
-        if criterion_result["criterion_summary_result"] == "positive_hit":
+        if criterion_result["criterion_summary_result"] == "positive_hit" or criterion_result["criterion_summary_result"] == "positive_and_negative_hit":
             if criterion_result["criterion_type"] == "EK":
                 global hit_counter_ek
                 hit_counter_ek = hit_counter_ek + 1
