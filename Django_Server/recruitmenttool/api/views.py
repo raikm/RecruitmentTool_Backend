@@ -33,7 +33,7 @@ now = datetime.datetime.now(tz=timezone.utc)
 
 @csrf_exempt
 @api_view(('POST',))
-def create_and_validate_new_study(request):
+def create_new_study(request):
     if request.method == 'POST':
         r = request.data
         dbhandler = Database_Handler(r)
@@ -44,15 +44,8 @@ def create_and_validate_new_study(request):
         else:
             return Response("Fail while creating the study - no study name provided?",
                             status=status.HTTP_400_BAD_REQUEST)
-        file_list = request.FILES.getlist('file')
-        if file_list:
-            Database_Handler.save_cda_files_in_xds(Database_Handler, file_list)
-        try:
-            result = evaluate_request(study.id)
-        except Exception:
-            return Response("NO CORRECT INFORMATION PROVIDED" + Exception,
-                            status=status.HTTP_400_BAD_REQUEST)
-        return Response(json.loads(result), status=status.HTTP_201_CREATED)
+
+        return Response("STUDY CREATED", status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt

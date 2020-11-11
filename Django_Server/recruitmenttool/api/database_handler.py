@@ -50,7 +50,7 @@ class Database_Handler:
                 conditions = criterion['conditions']
 
                 for c in conditions:
-                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=html.unescape(c['condtionXpath']), negative_xpath=html.unescape(c['condtionNegativeXpath']), rough_xpath=html.unescape(c['roughXpath']), criterion=criterion_object)
+                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=html.unescape(c['condtionXpath']), negative_xpath=html.unescape(c['condtionNegativeXpath']), rough_xpath=html.unescape(c['roughXpath']), rough_xpath_description=html.unescape(c['roughDescriptionXpath']), criterion=criterion_object)
             except:
                  print("----------Error while creating criterion object or condition----------")
 

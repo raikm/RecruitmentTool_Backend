@@ -17,7 +17,6 @@ from django.contrib import admin
 from django.urls import include, path
 from py4j.java_gateway import JavaGateway
 
-from api.views import create_and_validate_new_study
 from cdamanager.CDAExtractor import CDAExtractor
 import glob
 
@@ -29,7 +28,6 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     #REST FRAMEWORK URLs
     path('api/', include('api.urls', namespace='api')),
-    path('create/', create_and_validate_new_study, name='create_and_validate_new_study'),
 
     #emtpy = index
 ]

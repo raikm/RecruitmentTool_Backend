@@ -6,7 +6,7 @@ from .models import Study, Criterion, Condition, Information_Need, Patient
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Condition
-        fields = ('name', 'xpath', 'negative_xpath', 'rough_xpath')
+        fields = ('name', 'xpath', 'negative_xpath', 'rough_xpath', 'rough_xpath_description')
 
 
 class CriterionSerializer(serializers.HyperlinkedModelSerializer):
