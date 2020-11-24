@@ -98,21 +98,25 @@ def get_study(request, study_id):
 @api_view(('GET',))
 def get_visualized_cda(request, patient_id, document_id):
     # cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
-    gateway = JavaGateway()
-    xds_connector = gateway.entry_point
-    oid = "1.2.40.0.10.1.4.3.1"
-    root_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload"
-    cda_file_path = root_path + "/" +  patient_id + "/" + document_id + "_" + patient_id + ".xml"
-    #TODO: handle cache files
+
+    root_tempDownload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload"
+    root_tempCache_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache"
+    cda_file_path = root_tempCache_path + "/" + patient_id + "/" + patient_id + "_" + document_id + ".xml"
+    # try to get CDA File from tempDownload Folder
     if not path.exists(cda_file_path):
+        cda_file_path = root_tempDownload_path + "/" + patient_id + "/" + patient_id + "_" + document_id + ".xml"
+    # try to download CDA Files from Repository
+    if not path.exists(cda_file_path):
+        gateway = JavaGateway()
+        xds_connector = gateway.entry_point
+        oid = "1.2.40.0.10.1.4.3.1"
         cda_file_path = xds_connector.queryDocumentWithId(oid, patient_id, document_id)
+        gateway.close()
     if cda_file_path == "NO_DOCUMENT_FOUND":
         return Response("NO DOCUMENT FOUND", status=status.HTTP_400_BAD_REQUEST)
     stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
-    html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
-    # TODO: make temp-directory empty
-    gateway.close()
-    return HttpResponse(html)
+    cda_html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
+    return HttpResponse(cda_html)
 
 
 @csrf_exempt

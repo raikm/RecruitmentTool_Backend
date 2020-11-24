@@ -56,6 +56,8 @@ def get_patient(patient_id):
     patient_cda_files = glob.glob(
         "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
             patient_id) + "/*.xml")
+    if len(patient_cda_files) == 0:
+        patient_cda_files = get_cache_files(patient_id)
     if patient_cda_files is not None and len(patient_cda_files) != 0:
         patient_cda_file = CDAExtractor(patient_cda_files[0]);
         patient_details = {"patient_id": patient_cda_file.get_patient_id(),
