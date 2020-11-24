@@ -7,9 +7,9 @@ import sys
 # import saxonc
 import pytz
 
-class CDAExtractor:
 
-# Do note that one must avoid the // abbreviation whenever possible as it causes the whole document (subtree rooted at the context node) to be scanned.
+class CDAExtractor:
+    # Do note that one must avoid the // abbreviation whenever possible as it causes the whole document (subtree rooted at the context node) to be scanned.
     ERROR = "ERROR"
 
     def __init__(self, cda_file):
@@ -18,7 +18,7 @@ class CDAExtractor:
         self.root = self.tree.getroot()
         # find namespace out programmatcily if needed
         self.namespaces = {'': 'urn:hl7-org:v3',
-                      'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
+                           'xmlns:xsi': 'http://www.w3.org/2001/XMLSchema-instance'}
 
     def get_namespace(self):
         pass
@@ -45,7 +45,7 @@ class CDAExtractor:
     def get_document_id(self):
         xPath = """/*/id[@root="1.2.40.0.34.99.4613.3.1"]/@extension"""
         result = elementpath.select(self.root, xPath, self.namespaces)
-        #TODO: define all possible Document ID xPaths
+        # TODO: define all possible Document ID xPaths
         if len(result) == 0:
             xPath = """/*/id[@root="1.2.40.0.10.1.4.3.4.2.1"]/@extension"""
             result = elementpath.select(self.root, xPath, self.namespaces)
@@ -55,8 +55,8 @@ class CDAExtractor:
         xPath = """/ClinicalDocument/effectiveTime/@value"""
         resultStr = elementpath.select(self.root, xPath, self.namespaces)
         result = None
-        #print(resultStr[0])
-        #TODO: falsches Datum abfangen
+        # print(resultStr[0])
+        # TODO: falsches Datum abfangen
         if len(resultStr[0]) == 19:
             result = datetime.strptime(resultStr[0], '%Y%m%d%H%M%S%z')
         if len(resultStr[0]) == 8:
@@ -67,14 +67,40 @@ class CDAExtractor:
     def get_CDA_type(self):
         pass
 
+    def get_reference_id_from_result(self, xpath):
+        namespaces = {'': 'urn:hl7-org:v3'}
+        hit = False
+        print(xpath)
+        while hit is False:
+            #if xpath contains "concat" remove everything after that
+            result = xpath.find('/concat')
+            if result > 0:
+                xpath = xpath[:result]
 
-    def get_root_from_xml(self, cda_file):
-        # TODO: valid XML?
-        if type(cda_file) != str:
-            cda_file.seek(0)
-        try:
-            tree = ET.parse(cda_file)
-        except FileNotFoundError:
-            print("FILE NOT FOUND")  # TODO: better error handling
-
-        return tree.getroot()
+            xpath += '/parent::*'
+            if len(elementpath.select(self.root, xpath, namespaces)) == 0:
+                break
+            try:
+                hit = True if len(elementpath.select(self.root, xpath + '/parent::entry', namespaces)) > 0 else False
+                print(elementpath.select(self.root, xpath + '/parent::entry', namespaces))
+            except elementpath.exceptions.ElementPathSyntaxError:
+                print("Syntax Error")
+            except FileNotFoundError:
+                print("File not Found!")
+            except elementpath.exceptions.ElementPathTypeError:
+                print("Path Error")
+                break
+            except RecursionError:
+                print(xpath)
+                print("RecursionError")
+        if hit is True:
+            xpath += '//text/reference/@value'
+            results = elementpath.select(self.root, xpath, namespaces)
+            if results is not None and len(results) != 0:
+                for entry in results:
+                    index = results.index(entry)
+                    reference = str(entry.replace('#', ''))
+                    _results = elementpath.select(self.root, "//component[section//*/@ID = '" + reference +  "']/section/code/@code", namespaces)
+                    results[index] = 'id' + str(_results[0])
+            return results
+        return []

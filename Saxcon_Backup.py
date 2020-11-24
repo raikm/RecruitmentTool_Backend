@@ -5,7 +5,7 @@
     # SAXCON Library
     #proc = saxonc.PySaxonProcessor(license=True)
 
-    # def evaluate_cda_file(self, xPath, cda_file_path):
+    # def evaluate_cda_file(self, xpath, cda_file_path):
     #     try:
     #         xp = self.proc.new_xpath_processor()
     #         xp.declare_namespace("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
@@ -13,10 +13,10 @@
     #         xp.set_context(file_name=cda_file_path)
     #         print("-------------------------------")
     #         print(cda_file_path)
-    #         print(xPath)
+    #         print(xpath)
     #         print("start evaluate")
     #         print("-------------------------------")
-    #         results = xp.evaluate(xPath)
+    #         results = xp.evaluate(xpath)
     #
     #         xp.clear_parameters()
     #         xp.clear_properties()

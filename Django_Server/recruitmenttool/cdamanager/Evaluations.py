@@ -36,9 +36,11 @@ def evaluate_request(id, selected_patient_list, local_analysis):
         hit_counter_ek_negative = 0
         hit_counter_ak = 0
         hit_counter_ak_negative = 0
+
         patient_result = get_patient(str(patient['patient_id']))
         patient_result["criterion_results"] = evaluate_criterions(criterion_list, patient, local_analysis)
-        patient_result["criterion_results_overview_ic"] = str(hit_counter_ek)
+        patient_result["criterion_results_overview_ic"] = hit_counter_ek
+        #TODO: counter in integer
         patient_result["criterion_results_overview_ic_negative"] = str(hit_counter_ek_negative)
         patient_result["criterion_results_overview_ic_no_data"] = str(ek_total - hit_counter_ek - hit_counter_ek_negative)
         patient_result["criterion_results_overview_ec"] = str(hit_counter_ak)
@@ -98,16 +100,26 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
                 values_result = evaluator.evaluate_cda_file_Etree(evaluator, condition.rough_xpath, file_path)
 
                 if len(evaluation_result) > 0:
-                    hit = {"hit_result": evaluation_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
+                    hit = {"hit_result": evaluation_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created(), "document_hit_position": xml_file.get_reference_id_from_result(xpath=condition.xpath)}
                     evaluation_results["positive_hits"].append(hit)
-                    evaluation_results["evaluation_result_summary"] = "positive_hit"
+
                 if evaluation_negative_result is not None and len(evaluation_negative_result) > 0:
-                    hit = {"hit_result": evaluation_negative_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
+                    hit = {"hit_result": evaluation_negative_result, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created(), "document_hit_position": xml_file.get_reference_id_from_result(xpath=condition.negative_xpath)}
                     evaluation_results["negative_hits"].append(hit)
+
+                if len(evaluation_result) > 0 and (evaluation_negative_result is None or len(evaluation_negative_result) == 0):
+                    evaluation_results["evaluation_result_summary"] = "positive_hit"
+                elif evaluation_negative_result is not None and len(evaluation_negative_result) > 0 and len(evaluation_result) == 0:
                     evaluation_results["evaluation_result_summary"] = "negative_hit"
+                elif len(evaluation_result) > 0 and evaluation_negative_result is not None and len(evaluation_negative_result) > 0:
+                    evaluation_results["evaluation_result_summary"] = "positive_and_negative_hits"
+
                 if len(values_result) > 0:
                     value_result = {"value_result": values_result, "value_result_description": condition.rough_xpath_description, "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
                     value_results["values"].append(value_result)
+
+
+
 
             if len(evaluation_results["positive_hits"]) == 0 and len(evaluation_results["negative_hits"]) == 0:
                 evaluation_results["evaluation_result_summary"] = "no_hit"
@@ -121,7 +133,7 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
             criterion_result["criterion_summary_result"] = "positive_hit"
         if "negative_hit" in count_evaluation_summary:
             criterion_result["criterion_summary_result"] = "negative_hit"
-        if "positive_hit" in count_evaluation_summary and "negative_hit" in count_evaluation_summary:
+        if ("positive_hit" in count_evaluation_summary and "negative_hit" in count_evaluation_summary) or ("positive_and_negative_hits" in count_evaluation_summary):
             criterion_result["criterion_summary_result"] = "positive_and_negative_hit"
         if "no_hit" in count_evaluation_summary and "positive_hit" not in count_evaluation_summary and "negative_hit" not in count_evaluation_summary:
             criterion_result["criterion_summary_result"] = "no_hit"

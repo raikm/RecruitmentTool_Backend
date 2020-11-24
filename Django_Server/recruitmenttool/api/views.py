@@ -3,6 +3,7 @@ import distutils
 import glob
 import os.path
 from os import path
+from .models import Patient
 
 from django.core.files.base import ContentFile
 from django.http import HttpResponse, JsonResponse
@@ -28,7 +29,7 @@ from distutils import util
 
 import html
 
-now = datetime.datetime.now(tz=timezone.utc)
+
 
 
 @csrf_exempt
@@ -63,13 +64,13 @@ def validate_saved_criteria(request):
                 selected_patient_list = json.loads(selected_patient_list_str)
             else:
                 print("----------No valide selected patient-json----------")
-        try:
-            local_analysis = bool(distutils.util.strtobool(r.get('Local_Analysis')))
-            result = evaluate_request(study.id, selected_patient_list, local_analysis)
-        except Exception as e:
-            print(e)
-            return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
-                            status=status.HTTP_400_BAD_REQUEST)
+        #try:
+        local_analysis = bool(distutils.util.strtobool(r.get('Local_Analysis')))
+        result = evaluate_request(study.id, selected_patient_list, local_analysis)
+        #except Exception as e:
+        #    print(e)
+        #    return Response("NO CORRECT INFORMATION PROVIDED" + str(Exception),
+        #                    status=status.HTTP_400_BAD_REQUEST)
         return Response(result, status=status.HTTP_201_CREATED)
 
 
@@ -119,16 +120,22 @@ def get_visualized_cda(request, patient_id, document_id):
 def prepare_test_data(request):
     gateway = JavaGateway()
     xds_connector = gateway.entry_point
-    cda_test_files = glob.glob("C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/*.xml")
     oid = "1.2.40.0.10.1.4.3.1"
-    for cda_test_file in cda_test_files:
-        cda_file = CDAExtractor(cda_test_file)
+    cda_test_files = glob.glob(
+        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/*.xml")
+    for file in cda_test_files:
+        cda_file = CDAExtractor(file)
         patient_id = cda_file.get_patient_id()
+        patient_full_name = cda_file.get_patient_name()
+        patient_list = Patient.objects.filter(patient_id = patient_id)
+        if patient_list is None or len(patient_list) == 0:
+            Patient.objects.create(patient_id=patient_id, patient_first_name=patient_full_name['vornamen'][0],
+                                              patient_last_name=patient_full_name['nachname'][0])
         document_id = cda_file.get_document_id()
         cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
+        # TODO: write patient infos into DB
         if cda_exist is False:
-            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), cda_test_file)
-
+            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), file)
     gateway.close()
     return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
 

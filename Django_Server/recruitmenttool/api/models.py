@@ -2,12 +2,16 @@ from django.db import models
 
 
 class Study(models.Model):
-    name = models.CharField(max_length=100)  # Todo: limitieren in FrontEnd
-    description = models.CharField(
-        max_length=600, blank=True, default='Keine Beschreibung')
+    name = models.CharField(max_length=100)
+    head_of_study = models.CharField(
+        max_length=600, blank=True, default='Keine Angabe')
+    head_of_study_contact = models.CharField(
+        max_length=800, blank=True, default='Keine Angaben')
+    criterion_count = models.IntegerField()
+    elga_criterion_count = models.IntegerField()
+    eudraCT_number = models.CharField(
+        max_length=800, blank=True, default='Keine Angaben')
     date = models.DateTimeField()
-    only_current_patient_cohort = models.BooleanField() #TODO: per default in FrontEnd
-
 
 class Criterion(models.Model):
     criterion_type = models.CharField(max_length=100)

@@ -22,7 +22,7 @@ class CriterionSerializer(serializers.HyperlinkedModelSerializer):
 class InformationNeedSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Information_Need
-        fields = ('name', 'xPath')
+        fields = ('name', 'xpath')
 
 
 class StudySerializer(serializers.HyperlinkedModelSerializer):
@@ -31,8 +31,8 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Study
-        fields = ('id', 'name', 'description', 'date',
-                  'only_current_patient_cohort', 'criterions', 'information_needed')
+        fields = ('id', 'name', 'head_of_study', 'head_of_study_contact', 'criterion_count', 'elga_criterion_count', 'eudraCT_number', 'date',
+                 'criterions', 'information_needed')
 
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):

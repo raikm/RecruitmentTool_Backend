@@ -57,19 +57,31 @@ class CDAEvaluator:
 
         return tree.getroot()
 
-    def evaluate_cda_file_Etree(self, xPath, cda_file):
+    def evaluate_cda_file_Etree(self, xpath, cda_file):
         namespaces = {'': 'urn:hl7-org:v3'}
         try:
-            root = self.get_root_from_xml(self, cda_file)
-            results = elementpath.select(root, xPath, namespaces)
+            root = self.get_root_from_xml(self, cda_file=cda_file)
+            results = elementpath.select(root, xpath, namespaces)
         except elementpath.exceptions.ElementPathSyntaxError:
             print("Syntax Error")
-            return self.ERROR
+            return [self.ERROR]
         except FileNotFoundError:
             print("File not Found!")
-            return self.ERROR
+            return [self.ERROR]
 
         if results is not None and len(results) != 0:
-            return results
+            for entry in results:
+                if type(entry) is ET.Element:
+                    #get index
+                    index = results.index(entry)
 
+                    #self.convertXMLElementResults(self, entry)
+                    #replace entry at index x in results list
+                    results[index] = "Ergebnisse gefunden (siehe ELGA Dokument)"
+            return results
         return []
+
+
+    #def convertXMLElementResults(self, entry):
+    #    xml_str = ET.tostring(entry, encoding='unicode')
+    #    print(xml_str)
