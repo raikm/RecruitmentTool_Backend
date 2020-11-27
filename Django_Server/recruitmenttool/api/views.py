@@ -80,7 +80,7 @@ def all_studies(request):
     study_list = model.Study.objects.all()
     result = []
     for study in study_list:
-        data_set = {"Study_ID": study.id, "Study_Name": study.name}
+        data_set = serializer.StudySerializer(study).data
         result.append(data_set)
     return Response(result, status=status.HTTP_200_OK)
 
