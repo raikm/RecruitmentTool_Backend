@@ -21,9 +21,9 @@ hit_counter_ak_negative = 0
 
 def evaluate_request(id, selected_patient_list, local_analysis):
     criterion_list = model.Criterion.objects.all().filter(study_id=id).order_by('-criterion_type')
+    information_need_list = model.Information_Need.objects.all().filter(study_id=id)
     ek_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="EK"))
     ak_total = len(model.Criterion.objects.all().filter(study_id=id, criterion_type="AK"))
-    information_need_list = model.Information_Need.objects.all().filter(study_id=id)
     if len(selected_patient_list) == 0: raise Exception("No Patients in DB found")
     result_dic = {"patients": [], "study_id": id}
 
@@ -46,7 +46,7 @@ def evaluate_request(id, selected_patient_list, local_analysis):
         patient_result["criterion_results_overview_ec"] = str(hit_counter_ak)
         patient_result["criterion_results_overview_ec_negative"] = str(hit_counter_ak_negative)
         patient_result["criterion_results_overview_ec_no_data"] = str(ak_total - hit_counter_ak - hit_counter_ak_negative)
-        patient_result["information_needed_results"] = {}  # evaluate_information_need(information_need_list, patient)
+        patient_result["information_needed_results"] = evaluate_information_need(information_need_list, patient, local_analysis)
         result_dic["patients"].append(patient_result)
 
     return result_dic
@@ -73,11 +73,8 @@ def get_condtion(condition):
 
 
 def evaluate_criterions(criterion_list, patient, local_analysis):
+    patient_file_paths = get_patient_files_paths(str(patient['patient_id']), local_analysis)
 
-    if local_analysis is False:
-        patient_file_paths = download_all_files_from_patient(str(patient['patient_id']))
-    else:
-        patient_file_paths = get_cache_files(str(patient['patient_id']))
     criterion_results = []
     for criterion in criterion_list:
         criterion_result = {"name": criterion.name, "criterion_type": criterion.criterion_type, "conditions": []}
@@ -88,8 +85,7 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
             evaluation_results = {"positive_hits": [], "negative_hits": []}
             value_results = {"values": []}
 
-            # TODO: check if works: order patient_cda_files by date
-            patient_file_paths.sort(key=lambda fp: CDAExtractor(fp).get_date_created(), reverse=True)
+
             for file_path in patient_file_paths:
                 xml_file = CDAExtractor(file_path)
                 # sollte von alt nach neu abfragen, sodass neuste = evaluation_result_summary
@@ -159,26 +155,23 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
     return criterion_results
 
 
-def evaluate_information_need(information_need_list, patient):
-    information_need_results = []
+def evaluate_information_need(information_need_list, patient, local_analysis):
+    patient_file_paths = get_patient_files_paths(str(patient['patient_id']), local_analysis)
+    value_results = []
     for information in information_need_list:
-        information_result = {"name": information.name}
-        patient_cda_files = model.CDAFile.objects.all().filter(patient_id=patient['patient_id'])
+        value_result = {"information": information.name, "results_for_documents": []}
+        for file_path in patient_file_paths:
+            xml_file = CDAExtractor(file_path)
+            value_results_for_document = evaluator.evaluate_cda_file_Etree(evaluator, information.xpath, file_path)
+            if len(value_results_for_document) > 0:
+                result = {"value_results": value_results_for_document,
+                        "document_id": xml_file.get_document_id(), "document_date": xml_file.get_date_created()}
 
-        evaluation_related_cda = None
-        values_result = []
-        for file in patient_cda_files:
-            values_result = evaluator.evaluate_cda_file_Etree(evaluator, information.xpath, file.file)
-            if len(values_result) == 0:
-                continue
-            evaluation_related_cda = file.cda_id
-            break
+                value_result["results_for_documents"].append(result)
 
-        information_result["values_result"] = values_result
-        information_result["values_related_cda"] = evaluation_related_cda
-        information_need_results.append(information_result)
+        value_results.append(value_result)
 
-    return information_need_results
+    return value_results
 
 
 def download_all_files_from_patient(patient_id):
@@ -201,4 +194,11 @@ def get_cache_files(patient_id):
             patient_id) + "/*.xml")
 
 
-
+def get_patient_files_paths(patient_id, local_analysis):
+    if local_analysis is False:
+        path_list = download_all_files_from_patient(patient_id)
+    else:
+        path_list = get_cache_files(patient_id)
+        # TODO: check if works: order patient_cda_files by date
+    path_list.sort(key=lambda fp: CDAExtractor(fp).get_date_created(), reverse=True)
+    return path_list
