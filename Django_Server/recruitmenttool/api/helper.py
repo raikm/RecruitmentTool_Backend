@@ -27,3 +27,4 @@ def delete_cache_files():
     paths_to_delete = glob.glob(configParser.get('temp-folders', 'cache') + "/*")
     for path in paths_to_delete:
         shutil.rmtree(path, ignore_errors=True)
+

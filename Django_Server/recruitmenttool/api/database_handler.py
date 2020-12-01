@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import lxml
 from django.core.files.storage import default_storage
 from py4j.java_gateway import JavaGateway
 
@@ -12,7 +13,7 @@ from cdamanager.XMLEvaluator import XMLEvaluator
 import api.serializers as serializer
 import os
 import configparser
-
+from cdamanager.XpathEvaluator import XpathEvaluator
 now = datetime.datetime.now()
 
 configParser = configparser.RawConfigParser()
@@ -54,9 +55,13 @@ class Database_Handler:
                 conditions = criterion['conditions']
 
                 for c in conditions:
-                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=html.unescape(c['condtionXpath']), negative_xpath=html.unescape(c['condtionNegativeXpath']), rough_xpath=html.unescape(c['roughXpath']), rough_xpath_description=html.unescape(c['roughDescriptionXpath']), criterion=criterion_object)
-            except:
-                 print("----------Error while creating criterion object or condition----------")
+                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=XpathEvaluator.validate_xpath(html.unescape(c['condtionXpath'])), negative_xpath=XpathEvaluator.validate_xpath(html.unescape(c['condtionNegativeXpath'])), rough_xpath=XpathEvaluator.validate_xpath(html.unescape(c['roughXpath'])), rough_xpath_description=html.unescape(c['roughDescriptionXpath']), criterion=criterion_object)
+            except lxml.etree.XPathSyntaxError as e:
+                print("----------Error while adding xpaths----------")
+                print(e)
+            except Exception as e:
+                print("----------Error while creating criterion object or condition----------")
+                print(e)
 
     def write_information_need_in_db(self, study):
         information_need_list = None
@@ -69,7 +74,7 @@ class Database_Handler:
 
         for information_need in information_need_list:
             try:
-                Information_Need.objects.create(name=html.unescape(information_need['informationName']), xPath=html.unescape(information_need['informationXPath']), study=study)
+                Information_Need.objects.create(name=html.unescape(information_need['informationName']), xPath=XpathEvaluator.validate_xpath(html.unescape(information_need['informationXPath'])), study=study)
             except:
                  print("----------Error while creating information need object----------")
 
