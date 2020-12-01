@@ -1,6 +1,12 @@
 import json
 import glob
 import shutil
+import configparser
+
+configParser = configparser.RawConfigParser()
+configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configParser.read(configFilePath)
+
 
 def define_boolean(boolean_string):
     if boolean_string == "true":
@@ -18,6 +24,6 @@ def validate_json(s):
 
 
 def delete_cache_files():
-    paths_to_delete = glob.glob("C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/*")
+    paths_to_delete = glob.glob(configParser.get('temp-folders', 'cache') + "/*")
     for path in paths_to_delete:
         shutil.rmtree(path, ignore_errors=True)

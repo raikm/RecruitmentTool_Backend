@@ -7,6 +7,7 @@ from .CDAEvaluator import CDAEvaluator as evaluator
 from .CDAExtractor import CDAExtractor
 import api.serializers as serializer
 from collections import Counter
+import configparser
 
 SATISFIED = "SATISFIED"
 NOT_SATISFIED = "NOT_SATISFIED"
@@ -17,6 +18,10 @@ hit_counter_ek_negative = 0
 hit_counter_ak = 0
 hit_counter_ak_negative = 0
 
+
+configParser = configparser.RawConfigParser()
+configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configParser.read(configFilePath)
 
 
 def evaluate_request(id, selected_patient_list, local_analysis):
@@ -54,7 +59,7 @@ def evaluate_request(id, selected_patient_list, local_analysis):
 
 def get_patient(patient_id):
     patient_cda_files = glob.glob(
-        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
+         configParser.get('temp-folders', 'download') + "/" + str(
             patient_id) + "/*.xml")
     if len(patient_cda_files) == 0:
         patient_cda_files = get_cache_files(patient_id)
@@ -184,13 +189,13 @@ def download_all_files_from_patient(patient_id):
     xds_connector.downloadPatientFiles(oid, str(patient_id))
     gateway.close()
     return glob.glob(
-        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload/" + str(
+        configParser.get('temp-folders', 'download') + "/" + str(
             patient_id) + "/*.xml")
 
 
 def get_cache_files(patient_id):
     return glob.glob(
-        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/" + str(
+        configParser.get('temp-folders', 'cache') + "/" + str(
             patient_id) + "/*.xml")
 
 

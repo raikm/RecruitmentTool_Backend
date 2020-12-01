@@ -25,11 +25,11 @@ from cdamanager.CDAExtractor import CDAExtractor
 import json
 from py4j.java_gateway import JavaGateway
 from distutils import util
+import configparser
 
-
-import html
-
-
+configParser = configparser.RawConfigParser()
+configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configParser.read(configFilePath)
 
 
 @csrf_exempt
@@ -99,8 +99,8 @@ def get_study(request, study_id):
 def get_visualized_cda(request, patient_id, document_id):
     # cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
 
-    root_tempDownload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempDownload"
-    root_tempCache_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache"
+    root_tempDownload_path = configParser.get('temp-folders', 'download')
+    root_tempCache_path = configParser.get('temp-folders', 'cache')
     cda_file_path = root_tempCache_path + "/" + patient_id + "/" + patient_id + "_" + document_id + ".xml"
     # try to get CDA File from tempDownload Folder
     if not path.exists(cda_file_path):
@@ -114,7 +114,7 @@ def get_visualized_cda(request, patient_id, document_id):
         gateway.close()
     if cda_file_path == "NO_DOCUMENT_FOUND":
         return Response("NO DOCUMENT FOUND", status=status.HTTP_400_BAD_REQUEST)
-    stylesheet_path = """C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cdamanager/Ressources/ELGA_Referenzstylesheet_1.09.001/ELGA_Stylesheet_v1.0.xsl"""
+    stylesheet_path = configParser.get('xml-to-html-files', 'xsl-file')
     cda_html = CDATransformer.transform_xml_to_xsl(CDATransformer, cda_file_path, stylesheet_path)
     return HttpResponse(cda_html)
 
@@ -126,7 +126,7 @@ def prepare_test_data(request):
     xds_connector = gateway.entry_point
     oid = "1.2.40.0.10.1.4.3.1"
     cda_test_files = glob.glob(
-        "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/*.xml")
+        configParser.get('demo-files', 'cda-files'))
     for file in cda_test_files:
         cda_file = CDAExtractor(file)
         patient_id = cda_file.get_patient_id()

@@ -11,9 +11,13 @@ import html
 from cdamanager.XMLEvaluator import XMLEvaluator
 import api.serializers as serializer
 import os
+import configparser
 
 now = datetime.datetime.now()
 
+configParser = configparser.RawConfigParser()
+configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configParser.read(configFilePath)
 
 class Database_Handler:
 
@@ -106,7 +110,7 @@ class Database_Handler:
         gateway = JavaGateway()
         xds_connector = gateway.entry_point
         oid = "1.2.40.0.10.1.4.3.1"
-        root_temp_upload_path = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempUpload/"
+        root_temp_upload_path = configParser.get('temp-folders', 'upload')
         result = []
         for file in file_list:
             if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
@@ -127,7 +131,7 @@ class Database_Handler:
                     file_name = str(patient_id) + '_' + str(document_id) + '.xml'
                     default_storage.save("Django_Server/recruitmenttool/cda_files/tempUpload/" + file_name, file)
                     xds_connector.uploadDocument(oid, str(patient_id), str(document_id),
-                                                 root_temp_upload_path + file_name)
+                                                 root_temp_upload_path + "/" + file_name)
         gateway.close()
         return result
 
@@ -146,10 +150,10 @@ class Database_Handler:
                                                       patient_last_name=patient_full_name['nachname'][0])
                 document_id = cda_file.get_document_id()
                 file_name = str(patient_id) + '_' + str(document_id) + '.xml'
-                temp_cache_file = "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/Django_Server/recruitmenttool/cda_files/tempCache/" + str(patient_id) + "/" + file_name
+                temp_cache_file = configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name
                 if os.path.exists(temp_cache_file):
                     os.remove(temp_cache_file)
-                default_storage.save("Django_Server/recruitmenttool/cda_files/tempCache/" + str(patient_id) + "/" + file_name, file)
+                default_storage.save(configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name, file)
         return result
 
     def write_selected_patients_in_db(self):
