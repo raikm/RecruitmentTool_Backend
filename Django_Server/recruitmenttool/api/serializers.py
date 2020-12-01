@@ -1,6 +1,6 @@
 # serializers.py
 from rest_framework import serializers
-from .models import Study, Criterion, Condition, Information_Need, Patient
+from .models import Study, Criterion, Condition, Information_Need, Patient, Patient_Result
 
 
 class ConditionSerializer(serializers.HyperlinkedModelSerializer):
@@ -41,6 +41,13 @@ class PatientSerializer(serializers.HyperlinkedModelSerializer):
         model = Patient
         fields = ('patient_id', 'patient_first_name', 'patient_last_name', 'studies')
 
+
+class PatientResultSerializer(serializers.HyperlinkedModelSerializer):
+    study = StudySerializer(many=False, read_only=True)
+    patient = PatientSerializer(many=False, read_only=True)
+    class Meta:
+        model = Patient_Result
+        fields = ('study', 'patient', 'patient_result')
 
 
 #

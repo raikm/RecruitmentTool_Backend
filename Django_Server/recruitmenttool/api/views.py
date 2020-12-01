@@ -162,6 +162,7 @@ def save_selected_patients(request):
     r = request.data
     dbhandler = Database_Handler(r)
     dbhandler.write_selected_patients_in_db()
+    dbhandler.write_patient_results_in_db()
     delete_cache_files()
     return Response("SELECTED PATIENTS SAVED", status=status.HTTP_201_CREATED)
 
@@ -172,6 +173,9 @@ def update_selected_patients(request):
     r = request.data
     dbhandler = Database_Handler(r)
     dbhandler.update_selected_patients_in_db()
+    dbhandler.write_patient_results_in_db()
+    #TODO remove patient reuslts from db
+
     return Response("SELECTED PATIENTS UPDATED", status=status.HTTP_201_CREATED)
 
 
@@ -180,7 +184,7 @@ def update_selected_patients(request):
 def get_selected_patients(request, study_id):
     r = request.data
     dbhandler = Database_Handler(r)
-    selected_patients = dbhandler.get_selected_patients(request, study_id)
+    selected_patients = dbhandler.get_selected_patients(study_id)
     return JsonResponse(selected_patients, safe=False, status=status.HTTP_200_OK)
 
 

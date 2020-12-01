@@ -3,7 +3,7 @@ import lxml
 from django.core.files.storage import default_storage
 from py4j.java_gateway import JavaGateway
 
-from .models import Study, Criterion, Condition, Information_Need, Patient
+from .models import Study, Criterion, Condition, Information_Need, Patient, Patient_Result
 from cdamanager.CDAExtractor import CDAExtractor
 from api.helper import validate_json
 import datetime
@@ -177,6 +177,7 @@ class Database_Handler:
             print(e)
             print("----------Error while creating SelectedPatient Object----------")
 
+    #TODO: add in write_selected_patients_in_db to save code
     def update_selected_patients_in_db(self):
         try:
             selected_patient_list_str = self.request.get('Rejected_Patients[]')
@@ -193,16 +194,50 @@ class Database_Handler:
             print(e)
             print("----------Error while updating SelectedPatient Object----------")
 
-    def get_selected_patients(self, request, study_id):
+    def write_patient_results_in_db(self):
+        try:
+            patient_results_list_str = self.request.get('Patient_Results')
+            rejected_patient_list_str = self.request.get('Rejected_Patients[]')
+            study_id = self.request.get('Study_Id')
+            patient_results_list = []
+            rejected_patient_list = []
+            if patient_results_list_str and len(patient_results_list_str) > 0:
+                if validate_json(patient_results_list_str):
+                    patient_results_list = json.loads(patient_results_list_str)
+            if rejected_patient_list_str and rejected_patient_list_str != "[]":
+                if validate_json(rejected_patient_list_str):
+                    rejected_patient_list = json.loads(rejected_patient_list_str)
+            study = Study.objects.filter(id=study_id).first()
+
+            for patient_result in patient_results_list:
+                patient = Patient.objects.filter(patient_id=patient_result["patient_id"]).first()
+                patient_db_id = patient.id
+                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(Patient_Result.objects.filter(study_id=study.id)) > 0:
+                    Patient_Result.objects.update(study=study, patient=patient, patient_result=patient_result)
+                else:
+                    Patient_Result.objects.create(study=study, patient=patient, patient_result=patient_result)
+            for reject_patient_id in rejected_patient_list:
+                patient = Patient.objects.filter(patient_id=reject_patient_id).first()
+                patient_db_id = patient.id
+                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(Patient_Result.objects.filter(study_id=study.id)) > 0:
+                    patient_result = Patient_Result.objects.filter(study_id=study.id, patient_id=patient_db_id)
+                    patient_result.delete()
+        except Exception as e:
+            print(e)
+            print("----------Error while saving Patient Results----------")
+
+
+    def get_selected_patients(self, study_id):
         try:
             study = Study.objects.filter(id=study_id).first()
-            selected_patients_study = list(Patient.objects.filter(studies=study).all())
+            selected_patients_study = list(Patient_Result.objects.filter(study_id=study.id).all())
             result = []
 
-            for patient in selected_patients_study:
-                patient_result = serializer.PatientSerializer(patient).data
+            for patient_result in selected_patients_study:
+                patient_result = serializer.PatientResultSerializer(patient_result).data
+
                 #TODO: could be optimzed if all the clutter from the study object is removed
-                result.append(patient_result)
+                result.append(patient_result['patient_result'])
 
             return result
         except Exception as e:

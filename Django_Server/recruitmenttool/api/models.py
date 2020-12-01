@@ -41,6 +41,12 @@ class Patient(models.Model):
     studies = models.ManyToManyField(Study)
 
 
+class Patient_Result(models.Model):
+    study = models.ForeignKey(Study, related_name='patient_result', on_delete=models.CASCADE)
+    patient = models.ForeignKey(Patient, related_name='patient_result', on_delete=models.CASCADE)
+    patient_result = models.JSONField()
+
+
 
 #class CDAFile(models.Model):
 #    name = models.CharField(max_length=400)
