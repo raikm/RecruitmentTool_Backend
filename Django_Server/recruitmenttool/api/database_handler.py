@@ -13,7 +13,7 @@ from cdamanager.XMLEvaluator import XMLEvaluator
 import api.serializers as serializer
 import os
 import configparser
-from cdamanager.XpathEvaluator import XpathEvaluator
+from cdamanager.CDAEvaluator import CDAEvaluator
 now = datetime.datetime.now()
 
 configParser = configparser.RawConfigParser()
@@ -118,7 +118,7 @@ class Database_Handler:
         root_temp_upload_path = configParser.get('temp-folders', 'upload')
         result = []
         for file in file_list:
-            if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
+            if CDAEvaluator.evaluate_file_type(XMLEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_full_name = cda_file.get_patient_name()
@@ -143,7 +143,7 @@ class Database_Handler:
     def save_cda_files_in_cache(self, file_list):
         result = []
         for file in file_list:
-            if XMLEvaluator.evaluate_file_type(XMLEvaluator, file):
+            if CDAEvaluator.evaluate_file_type(XMLEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_full_name = cda_file.get_patient_name()

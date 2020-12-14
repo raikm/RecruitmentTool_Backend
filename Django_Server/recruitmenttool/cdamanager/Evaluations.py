@@ -73,7 +73,7 @@ def get_patient(patient_id):
     return None
 
 
-def get_condtion(condition):
+def get_condition(condition):
     return serializer.ConditionSerializer(condition).data
 
 
