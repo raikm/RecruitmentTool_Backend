@@ -89,7 +89,7 @@ def evaluate_criterions(criterion_list, patient, local_analysis):
 
             evaluation_results = {"positive_hits": [], "negative_hits": []}
             value_results = {"values": []}
-
+            print(condition.xpath)
 
             for file_path in patient_file_paths:
                 xml_file = CDAExtractor(file_path)
@@ -167,6 +167,7 @@ def evaluate_information_need(information_need_list, patient, local_analysis):
         value_result = {"information": information.name, "results_for_documents": []}
         for file_path in patient_file_paths:
             xml_file = CDAExtractor(file_path)
+            print(information.xpath)
             value_results_for_document = evaluator.evaluate_cda_file_Etree(evaluator, information.xpath, file_path)
             if len(value_results_for_document) > 0:
                 result = {"value_results": value_results_for_document,

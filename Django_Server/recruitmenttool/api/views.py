@@ -139,7 +139,7 @@ def prepare_test_data(request):
         cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
         # TODO: write patient infos into DB
         if cda_exist is False:
-            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), file)
+            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/"+file)
     gateway.close()
     return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
 
@@ -161,22 +161,9 @@ def get_patients(request):
 def save_selected_patients(request):
     r = request.data
     dbhandler = Database_Handler(r)
-    dbhandler.write_selected_patients_in_db()
     dbhandler.write_patient_results_in_db()
     delete_cache_files()
     return Response("SELECTED PATIENTS SAVED", status=status.HTTP_201_CREATED)
-
-
-@csrf_exempt
-@api_view(('POST',))
-def update_selected_patients(request):
-    r = request.data
-    dbhandler = Database_Handler(r)
-    dbhandler.update_selected_patients_in_db()
-    dbhandler.write_patient_results_in_db()
-    #TODO remove patient reuslts from db
-
-    return Response("SELECTED PATIENTS UPDATED", status=status.HTTP_201_CREATED)
 
 
 @csrf_exempt

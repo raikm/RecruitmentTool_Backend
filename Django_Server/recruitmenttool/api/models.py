@@ -38,7 +38,6 @@ class Patient(models.Model):
     patient_id = models.IntegerField()
     patient_first_name = models.CharField(max_length=100)
     patient_last_name = models.CharField(max_length=100)
-    studies = models.ManyToManyField(Study)
 
 
 class Patient_Result(models.Model):
@@ -46,13 +45,3 @@ class Patient_Result(models.Model):
     patient = models.ForeignKey(Patient, related_name='patient_result', on_delete=models.CASCADE)
     patient_result = models.JSONField()
 
-
-
-#class CDAFile(models.Model):
-#    name = models.CharField(max_length=400)
-#    cda_id = models.FloatField()
-#    file = models.FileField(upload_to='Django_Server/recruitmenttool/cda_files')
-#    file_date = models.DateTimeField()
-#    upload_date = models.DateTimeField(auto_now=True)
-#    patient = models.ForeignKey(
-#        Patient, related_name='patient', on_delete=models.CASCADE)

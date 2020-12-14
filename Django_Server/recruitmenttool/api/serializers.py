@@ -36,10 +36,9 @@ class StudySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class PatientSerializer(serializers.HyperlinkedModelSerializer):
-    studies = StudySerializer(many=True, read_only=True)
     class Meta:
         model = Patient
-        fields = ('patient_id', 'patient_first_name', 'patient_last_name', 'studies')
+        fields = ('patient_id', 'patient_first_name', 'patient_last_name')
 
 
 class PatientResultSerializer(serializers.HyperlinkedModelSerializer):
@@ -49,12 +48,3 @@ class PatientResultSerializer(serializers.HyperlinkedModelSerializer):
         model = Patient_Result
         fields = ('study', 'patient', 'patient_result')
 
-
-#
-# class CDAFile(serializers.HyperlinkedModelSerializer):
-#     patient = PatientSerializer(many=False, read_only=True)
-#
-#     class Meta:
-#         model = CDAFile
-#         fields = ('Name', 'Path', 'File', 'File_Date',
-#                   'Upload_Date', 'patient')

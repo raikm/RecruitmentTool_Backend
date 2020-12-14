@@ -161,42 +161,9 @@ class Database_Handler:
                 default_storage.save(configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name, file)
         return result
 
-    def write_selected_patients_in_db(self):
-        try:
-            selected_patient_list_str = self.request.get('Selected_Patients[]')
-            study_id = self.request.get('Study_Id')
-            selected_patient_list = []
-            if selected_patient_list_str and selected_patient_list_str != "[]":
-                if validate_json(selected_patient_list_str):
-                    selected_patient_list = json.loads(selected_patient_list_str)
-            study = Study.objects.filter(id=study_id).first()
-            for patient_id in selected_patient_list:
-                p = Patient.objects.filter(patient_id=patient_id).first()
-                p.studies.add(study)
-        except Exception as e:
-            print(e)
-            print("----------Error while creating SelectedPatient Object----------")
-
-    #TODO: add in write_selected_patients_in_db to save code
-    def update_selected_patients_in_db(self):
-        try:
-            selected_patient_list_str = self.request.get('Rejected_Patients[]')
-            study_id = self.request.get('Study_Id')
-            selected_patient_list = []
-            if selected_patient_list_str and selected_patient_list_str != "[]":
-                if validate_json(selected_patient_list_str):
-                    selected_patient_list = json.loads(selected_patient_list_str)
-            study = Study.objects.filter(id=study_id).first()
-            for patient_id in selected_patient_list:
-                p = Patient.objects.filter(patient_id=patient_id).first()
-                p.studies.remove(study)
-        except Exception as e:
-            print(e)
-            print("----------Error while updating SelectedPatient Object----------")
-
     def write_patient_results_in_db(self):
         try:
-            patient_results_list_str = self.request.get('Patient_Results')
+            patient_results_list_str = self.request.get('Selected_Patients[]')
             rejected_patient_list_str = self.request.get('Rejected_Patients[]')
             study_id = self.request.get('Study_Id')
             patient_results_list = []

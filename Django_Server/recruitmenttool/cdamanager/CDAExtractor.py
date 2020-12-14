@@ -70,7 +70,6 @@ class CDAExtractor:
     def get_reference_id_from_result(self, xpath):
         namespaces = {'': 'urn:hl7-org:v3'}
         hit = False
-        print(xpath)
         while hit is False:
             #if xpath contains "concat" remove everything after that
             result = xpath.find('/concat')
@@ -82,7 +81,6 @@ class CDAExtractor:
                 break
             try:
                 hit = True if len(elementpath.select(self.root, xpath + '/parent::entry', namespaces)) > 0 else False
-                print(elementpath.select(self.root, xpath + '/parent::entry', namespaces))
             except elementpath.exceptions.ElementPathSyntaxError:
                 print("Syntax Error")
             except FileNotFoundError:
@@ -91,7 +89,6 @@ class CDAExtractor:
                 print("Path Error")
                 break
             except RecursionError:
-                print(xpath)
                 print("RecursionError")
         if hit is True:
             xpath += '//text/reference/@value'
