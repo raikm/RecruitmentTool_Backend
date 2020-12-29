@@ -9,7 +9,6 @@ from api.helper import validate_json
 import datetime
 import json
 import html
-from cdamanager.XMLEvaluator import XMLEvaluator
 import api.serializers as serializer
 import os
 import configparser
@@ -143,7 +142,7 @@ class Database_Handler:
     def save_cda_files_in_cache(self, file_list):
         result = []
         for file in file_list:
-            if CDAEvaluator.evaluate_file_type(XMLEvaluator, file):
+            if CDAEvaluator.evaluate_file_type(CDAEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_full_name = cda_file.get_patient_name()

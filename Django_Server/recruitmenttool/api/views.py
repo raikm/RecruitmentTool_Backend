@@ -12,8 +12,7 @@ from rest_framework.response import Response
 from django.core.files.storage import default_storage, FileSystemStorage
 from rest_framework import status
 from rest_framework.decorators import api_view
-from cdamanager.Evaluations import evaluate_request
-from cdamanager.XMLEvaluator import XMLEvaluator
+from Django_Server.recruitmenttool.cdamanager.Evaluations import evaluate_request
 from api.database_handler import Database_Handler
 from django.utils import timezone
 import datetime
