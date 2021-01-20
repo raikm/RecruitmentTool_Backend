@@ -5,8 +5,8 @@ from datetime import datetime
 class TestCDAEvaluator(unittest.TestCase):
 
     # Testdata
-    cda_test_file = "./Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
     # File mit Patienten aelter 6 Jahre aber keine weiteren Infos
+    cda_test_file = "./Testdata/ELGA-023-Entlassungsbrief_aerztlich_EIS-FullSupport.xml"
 
     def setUp(self):
         self.extractor = CDAExtractor(self.cda_test_file)
