@@ -2,7 +2,6 @@ import glob
 
 import api.models as model
 from py4j.java_gateway import JavaGateway
-import json
 from .CDAEvaluator import CDAEvaluator as evaluator
 from .CDAExtractor import CDAExtractor
 import api.serializers as serializer
@@ -22,6 +21,8 @@ hit_counter_ak_negative = 0
 configParser = configparser.RawConfigParser()
 configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
 configParser.read(configFilePath)
+
+
 
 
 def evaluate_request(id, selected_patient_list, local_analysis):

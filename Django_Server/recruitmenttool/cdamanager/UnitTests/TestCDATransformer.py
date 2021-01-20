@@ -7,9 +7,6 @@ from Django_Server.recruitmenttool.cdamanager.CDATransformer import CDATransform
 
 
 class TestCDATransformer(unittest.TestCase):
-    cda_test_file = ""
-    cda_invalid_file = ""
-    stylesheet_path = ""
 
     def setUp(self):
         self.cda_transformer = CDATransformer()

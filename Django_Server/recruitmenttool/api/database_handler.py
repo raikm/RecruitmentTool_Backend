@@ -19,6 +19,7 @@ configParser = configparser.RawConfigParser()
 configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
 configParser.read(configFilePath)
 
+
 class Database_Handler:
 
     def __init__(self, request):
@@ -77,39 +78,6 @@ class Database_Handler:
             except:
                  print("----------Error while creating information need object----------")
 
-    # def write_patient_and_CDAData_in_db(self, file):
-    #     extractor = CDAExtractor(file)
-    #     patient_id_from_cda = extractor.get_patient_id()
-    #     patient_list = Patient.objects.filter(patient_id = patient_id_from_cda)
-    #     patient = None
-    #     if patient_list is None or len(patient_list) == 0:
-    #         patientfullname = extractor.get_patient_name()
-    #         try:
-    #             patient = Patient.objects.create(title="", #TODO add title
-    #                                           first_name=patientfullname['vornamen'][0],
-    #                                           middle_names= patientfullname['vornamen'][1],
-    #                                           last_name= patientfullname['nachname'][0],
-    #                                           birthdate=extractor.get_birthTime(),
-    #                                           patient_id=patient_id_from_cda)
-    #         except:
-    #             print("----------Error while creating Patient Object----------")
-    #     else:
-    #         # if patient already exist
-    #         patient = patient_list[0]
-    #
-    #     cda_id = extractor.get_document_id()
-    #     cda_list = CDAFile.objects.filter(cda_id = cda_id)
-    #     if cda_list is None or len(cda_list) == 0:
-    #         CDAFile.objects.create(  name=str(file),
-    #                                  cda_id=cda_id,
-    #                                  file=file,
-    #                                  file_date=extractor.get_date_created(),
-    #                                  upload_date=now,
-    #                                  patient=patient)
-    #     else:
-    #
-    #         print("----------CDA File exist already - no db-save----------")
-    #     del extractor
     def save_cda_files_in_xds(self, file_list):
         gateway = JavaGateway()
         xds_connector = gateway.entry_point
@@ -117,7 +85,7 @@ class Database_Handler:
         root_temp_upload_path = configParser.get('temp-folders', 'upload')
         result = []
         for file in file_list:
-            if CDAEvaluator.evaluate_file_type(XMLEvaluator, file):
+            if CDAEvaluator.evaluate_file_type(CDAEvaluator, file):
                 cda_file = CDAExtractor(file)
                 patient_id = cda_file.get_patient_id()
                 patient_full_name = cda_file.get_patient_name()
@@ -192,7 +160,6 @@ class Database_Handler:
             print(e)
             print("----------Error while saving Patient Results----------")
 
-
     def get_selected_patients(self, study_id):
         try:
             study = Study.objects.filter(id=study_id).first()
@@ -209,7 +176,6 @@ class Database_Handler:
         except Exception as e:
             print(e)
             print("----------Error while creating SelectedPatient Object----------")
-
 
     def create_patient_list(self, patient_id, patient_full_name):
             patient_first_name = patient_full_name['vornamen'][0]
