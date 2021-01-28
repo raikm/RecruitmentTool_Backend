@@ -1,11 +1,11 @@
 from django.urls import include, path
-from .views import create_new_study, all_studies, get_study, validate_saved_criteria, get_visualized_cda, prepare_test_data, get_patients, save_selected_patients, get_selected_patients, validate_selected_cda_files
+from .views import create_or_edit_new_study, all_studies, get_study, validate_saved_criteria, get_visualized_cda, prepare_test_data, get_patients, save_selected_patients, get_selected_patients, validate_selected_cda_files
 
 app_name = "api"
 
 
 urlpatterns = [
-    path('create/', create_new_study, name='create_new_study'),
+    path('createOrEdit/', create_or_edit_new_study, name='create_or_edit_new_study'),
     path('getAllStudies/', all_studies, name='all_studies'),
     path('getAllPatients/', get_patients, name='get_patients'),
     path('saveSelectedPatients/', save_selected_patients, name='save_selected_patients'),

@@ -33,7 +33,7 @@ configParser.read(configFilePath)
 
 @csrf_exempt
 @api_view(('POST',))
-def create_new_study(request):
+def create_or_edit_new_study(request):
     if request.method == 'POST':
         r = request.data
         dbhandler = Database_Handler(r)

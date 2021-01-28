@@ -13,6 +13,9 @@ import api.serializers as serializer
 import os
 import configparser
 from cdamanager.CDAEvaluator import CDAEvaluator
+
+from cdamanager.XpathEvaluator import XpathEvaluator
+
 now = datetime.datetime.now()
 
 configParser = configparser.RawConfigParser()
@@ -28,15 +31,41 @@ class Database_Handler:
         # self.extractor = CDAExtractor(self.file)
 
     def write_study_in_db(self):
-        try:
-            study = Study.objects.create(name=self.request.get('Study_Name'),
-                                               description=self.request.get(
-                                                   'Description'),
-                                               date=now,
-                                               only_current_patient_cohort=True)
-            return study
-        except:
-            print("----------Error while creating Study Object----------")
+        # 'id', 'name', 'head_of_study', 'head_of_study_contact', 'criterion_count', 'elga_criterion_count', 'eudraCT_number', 'date',
+        # 'criterions', 'information_needed'
+        if not Study.objects.filter(eudraCT_number=self.request.get('Study_number')).first():
+            try:
+
+                study = Study.objects.create(name=self.request.get('Study_Name'),
+                                             eudraCT_number=self.request.get(
+                                                 'Study_number'),
+                                             date=now,
+                                             head_of_study=self.request.get(
+                                                 'head_of_study'),
+                                             criterion_count=self.request.get(
+                                                 'criterion_count'),
+                                             elga_criterion_count=self.request.get(
+                                                 'criterion_elga_count')
+
+                                             )
+                return study
+            except:
+                print("----------Error while creating Study Object----------")
+        else:
+            Study.objects.filter(eudraCT_number=self.request.get('Study_number')).update(name=self.request.get('Study_Name'),
+                                         eudraCT_number=self.request.get(
+                                             'Study_number'),
+                                         date=now,
+                                         head_of_study=self.request.get(
+                                             'head_of_study'),
+                                         criterion_count=self.request.get(
+                                             'criterion_count'),
+                                         elga_criterion_count=self.request.get(
+                                             'criterion_elga_count')
+
+                                         )
+
+            return Study.objects.filter(eudraCT_number=self.request.get('Study_number')).first()
 
     def write_criterion_in_db(self, study):
         global criterion_list
@@ -48,14 +77,29 @@ class Database_Handler:
                 print("----------No valide criterium-json----------")
         else:
             print("----------Error while parsing criterion_list_str----------")
+        #find criterion to study -> if exist delete all
+        old_criterion = Criterion.objects.filter(study_id=study.id).all()
+        for old in old_criterion:
+            old.delete()
+            old_condition = Condition.objects.filter(criterion_id=old.id).first()
+            if old_condition:
+                old_condition.delete()
 
         for criterion in criterion_list:
+
             try:
-                criterion_object = Criterion.objects.create(criterion_type=html.unescape(criterion['criterion_type']), name=html.unescape(criterion['name']), study=study)
+                criterion_object = Criterion.objects.create(criterion_type=html.unescape(criterion['criterion_type']),
+                                                            name=html.unescape(criterion['name']), study=study)
                 conditions = criterion['conditions']
 
                 for c in conditions:
-                    Condition.objects.create(name=html.unescape(c['conditionName']), xpath=XpathEvaluator.validate_xpath(html.unescape(c['condtionXpath'])), negative_xpath=XpathEvaluator.validate_xpath(html.unescape(c['condtionNegativeXpath'])), rough_xpath=XpathEvaluator.validate_xpath(html.unescape(c['roughXpath'])), rough_xpath_description=html.unescape(c['roughDescriptionXpath']), criterion=criterion_object)
+                    Condition.objects.create(name=html.unescape(c['name']),
+                                             xpath=XpathEvaluator.validate_xpath(XpathEvaluator, html.unescape(c['xpath'])),
+                                             negative_xpath=XpathEvaluator.validate_xpath(XpathEvaluator,
+                                                 html.unescape(c['negative_xpath'])),
+                                             rough_xpath=XpathEvaluator.validate_xpath(XpathEvaluator, html.unescape(c['rough_xpath'])),
+                                             rough_xpath_description=html.unescape(c['rough_xpath_description']),
+                                             criterion=criterion_object)
             except lxml.etree.XPathSyntaxError as e:
                 print("----------Error while adding xpaths----------")
                 print(e)
@@ -71,12 +115,17 @@ class Database_Handler:
                 information_need_list = json.loads(information_need_list_str)
             else:
                 print("----------No valide information-need-json----------")
+        Information_Need.objects.filter(study_id=study.id).all().delete()
+        if information_need_list is not None:
 
-        for information_need in information_need_list:
-            try:
-                Information_Need.objects.create(name=html.unescape(information_need['informationName']), xPath=XpathEvaluator.validate_xpath(html.unescape(information_need['informationXPath'])), study=study)
-            except:
-                 print("----------Error while creating information need object----------")
+            for information_need in information_need_list:
+                try:
+                    Information_Need.objects.create(name=html.unescape(information_need['name']),
+                                                    xpath=XpathEvaluator.validate_xpath(XpathEvaluator,
+                                                        html.unescape(information_need['xpath'])), study=study)
+                except Exception as e:
+                    print("----------Error while creating information need object----------")
+                    print(e)
 
     def save_cda_files_in_xds(self, file_list):
         gateway = JavaGateway()
@@ -92,10 +141,12 @@ class Database_Handler:
                 if not any(obj['patient_id'] == patient_id for obj in result):
                     result.append(self.create_patient_list(self, patient_id, patient_full_name))
 
-                patient_list = Patient.objects.filter(patient_id = patient_id, patient_first_name = patient_full_name['vornamen'][0], patient_last_name = patient_full_name['nachname'][0])
+                patient_list = Patient.objects.filter(patient_id=patient_id,
+                                                      patient_first_name=patient_full_name['vornamen'][0],
+                                                      patient_last_name=patient_full_name['nachname'][0])
                 if patient_list is None or len(patient_list) == 0:
                     Patient.objects.create(patient_id=patient_id, patient_first_name=patient_full_name['vornamen'][0],
-                                                      patient_last_name=patient_full_name['nachname'][0])
+                                           patient_last_name=patient_full_name['nachname'][0])
                 document_id = cda_file.get_document_id()
                 cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
                 # TODO: write patient infos into DB
@@ -119,13 +170,14 @@ class Database_Handler:
                 patient_list = Patient.objects.filter(patient_id=patient_id)
                 if patient_list is None or len(patient_list) == 0:
                     Patient.objects.create(patient_id=patient_id, patient_first_name=patient_full_name['vornamen'][0],
-                                                      patient_last_name=patient_full_name['nachname'][0])
+                                           patient_last_name=patient_full_name['nachname'][0])
                 document_id = cda_file.get_document_id()
                 file_name = str(patient_id) + '_' + str(document_id) + '.xml'
                 temp_cache_file = configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name
                 if os.path.exists(temp_cache_file):
                     os.remove(temp_cache_file)
-                default_storage.save(configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name, file)
+                default_storage.save(
+                    configParser.get('temp-folders', 'cache') + "/" + str(patient_id) + "/" + file_name, file)
         return result
 
     def write_patient_results_in_db(self):
@@ -146,14 +198,16 @@ class Database_Handler:
             for patient_result in patient_results_list:
                 patient = Patient.objects.filter(patient_id=patient_result["patient_id"]).first()
                 patient_db_id = patient.id
-                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(Patient_Result.objects.filter(study_id=study.id)) > 0:
+                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(
+                        Patient_Result.objects.filter(study_id=study.id)) > 0:
                     Patient_Result.objects.update(study=study, patient=patient, patient_result=patient_result)
                 else:
                     Patient_Result.objects.create(study=study, patient=patient, patient_result=patient_result)
             for reject_patient_id in rejected_patient_list:
                 patient = Patient.objects.filter(patient_id=reject_patient_id).first()
                 patient_db_id = patient.id
-                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(Patient_Result.objects.filter(study_id=study.id)) > 0:
+                if len(Patient_Result.objects.filter(patient_id=patient_db_id)) > 0 and len(
+                        Patient_Result.objects.filter(study_id=study.id)) > 0:
                     patient_result = Patient_Result.objects.filter(study_id=study.id, patient_id=patient_db_id)
                     patient_result.delete()
         except Exception as e:
@@ -169,7 +223,7 @@ class Database_Handler:
             for patient_result in selected_patients_study:
                 patient_result = serializer.PatientResultSerializer(patient_result).data
 
-                #TODO: could be optimzed if all the clutter from the study object is removed
+                # TODO: could be optimzed if all the clutter from the study object is removed
                 result.append(patient_result['patient_result'])
 
             return result
@@ -178,9 +232,7 @@ class Database_Handler:
             print("----------Error while creating SelectedPatient Object----------")
 
     def create_patient_list(self, patient_id, patient_full_name):
-            patient_first_name = patient_full_name['vornamen'][0]
-            patient_last_name = patient_full_name['nachname'][0]
-            return {"patient_id": patient_id, "patient_first_name": patient_first_name,
-                              "patient_last_name": patient_last_name}
-
-
+        patient_first_name = patient_full_name['vornamen'][0]
+        patient_last_name = patient_full_name['nachname'][0]
+        return {"patient_id": patient_id, "patient_first_name": patient_first_name,
+                "patient_last_name": patient_last_name}
