@@ -3,6 +3,7 @@ import os
 
 from Django_Server.recruitmenttool.api.helper import *
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 class TestHelper(unittest.TestCase):
 
@@ -21,7 +22,7 @@ class TestHelper(unittest.TestCase):
         self.assertEqual(False, result, "Result is not 'False'")
 
     def test_cache_delete(self):
-        cache_path = r'C:\Users\Raik Müller\Documents\GitHub\RecruitmentTool_Backend\Django_Server\recruitmenttool\cda_files\tempCache'
+        cache_path = BASE_DIR + r'/cda_files/tempCache'
         #create temp directory
         os.mkdir(cache_path + "/temp_test_patient_0000")
         files_in_path = glob.glob(cache_path + "/*")

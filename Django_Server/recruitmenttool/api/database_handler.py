@@ -18,8 +18,9 @@ from cdamanager.XpathEvaluator import XpathEvaluator
 
 now = datetime.datetime.now()
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 configParser = configparser.RawConfigParser()
-configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configFilePath = BASE_DIR + r'/config_file.cfg'
 configParser.read(configFilePath)
 
 

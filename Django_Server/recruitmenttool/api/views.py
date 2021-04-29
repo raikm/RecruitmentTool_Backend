@@ -26,8 +26,9 @@ from py4j.java_gateway import JavaGateway
 from distutils import util
 import configparser
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 configParser = configparser.RawConfigParser()
-configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configFilePath = BASE_DIR + r'/config_file.cfg'
 configParser.read(configFilePath)
 
 
@@ -97,7 +98,7 @@ def get_study(request, study_id):
 @api_view(('GET',))
 def get_visualized_cda(request, patient_id, document_id):
     # cda_file = model.CDAFile.objects.all().filter(cda_id=1234567.1).first()
-
+    print(BASE_DIR)
     root_tempDownload_path = configParser.get('temp-folders', 'download')
     root_tempCache_path = configParser.get('temp-folders', 'cache')
     cda_file_path = root_tempCache_path + "/" + patient_id + "/" + patient_id + "_" + document_id + ".xml"
@@ -138,7 +139,7 @@ def prepare_test_data(request):
         cda_exist = xds_connector.validateNewDocument(oid, str(patient_id), str(document_id))
         # TODO: write patient infos into DB
         if cda_exist is False:
-            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), "C:/Users/Raik Müller/Documents/GitHub/RecruitmentTool_Backend/"+file)
+            xds_connector.uploadDocument(oid, str(patient_id), str(document_id), BASE_DIR +file)
     gateway.close()
     return Response("TEST DATA UPLAODED", status=status.HTTP_201_CREATED)
 

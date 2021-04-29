@@ -7,6 +7,7 @@ from .CDAExtractor import CDAExtractor
 import api.serializers as serializer
 from collections import Counter
 import configparser
+import os
 
 SATISFIED = "SATISFIED"
 NOT_SATISFIED = "NOT_SATISFIED"
@@ -17,9 +18,9 @@ hit_counter_ek_negative = 0
 hit_counter_ak = 0
 hit_counter_ak_negative = 0
 
-
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 configParser = configparser.RawConfigParser()
-configFilePath = r'Django_Server/recruitmenttool/config_file.cfg'
+configFilePath = BASE_DIR + r'/config_file.cfg'
 configParser.read(configFilePath)
 
 
